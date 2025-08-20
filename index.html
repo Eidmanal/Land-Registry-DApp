@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Land Management DApp</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <link rel="stylesheet" href="src/styles.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+</head>
+<body>
+  <div class="app-container">
+    <header class="app-header">
+      <div class="header-content">
+        <h1><i class="fas fa-landmark"></i> Land Management DApp</h1>
+        <div class="wallet-section">
+          <button id="connectWalletBtn" class="wallet-btn">
+            <i class="fas fa-wallet"></i> Connect Wallet
+          </button>
+          <div id="userAddress" class="wallet-address" style="display: none;">
+            <i class="fas fa-user-circle"></i> Not connected
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div id="connectMessage" class="connect-message">
+      <i class="fas fa-info-circle"></i> Please connect your wallet to continue.
+    </div>
+
+    <!-- START: User Registration / Approval UI -->
+    <div id="userRegistrationWrap" style="display:none; padding:16px;">
+      <div id="approvalNotice" class="notification warning" style="display:none; margin-bottom:12px;"></div>
+
+      <!-- User submits NRC to request approval -->
+      <div id="userRegistrationContainer" class="form-container" style="display:block; padding:16px;">
+        <h2><i class="fas fa-id-card"></i> Request Account Access</h2>
+        <p>Your account must be approved by the Commissioner to use this system.</p>
+        <form id="userRegistrationForm" class="app-form">
+          <div class="form-group">
+            <label for="nrcInput"><i class="fas fa-id-badge"></i> NRC Number</label>
+            <input type="text" id="nrcInput" placeholder="Enter your NRC number" required />
+          </div>
+          <button id="submitRegistrationBtn" type="submit" class="submit-btn">
+            <i class="fas fa-paper-plane"></i> Request Approval
+          </button>
+        </form>
+      </div>
+    </div>
+    <!-- END: User Registration / Approval UI -->
+    
+    <!-- This is the main dashboard, shown only after connection AND approval -->
+    <main class="app-main" id="dashboard" style="display:none;">
+      <nav class="app-nav">
+        <button id="showRegisterFormBtn" class="nav-btn active">
+          <i class="fas fa-plus-circle"></i> Register Land
+        </button>
+        <button id="showAllLandsBtn" class="nav-btn">
+          <i class="fas fa-list"></i> View Lands
+        </button>
+        <button id="showHistoryBtn" class="nav-btn">
+          <i class="fas fa-history"></i> History
+        </button>
+        <button id="showAdminPanelBtn" class="nav-btn admin-only">
+          <i class="fas fa-user-shield"></i> Admin Panel
+        </button>
+      </nav>
+
+      <div class="content-section">
+        <div id="landFormContainer" class="form-container">
+          <h2><i class="fas fa-map-marked-alt"></i> Register New Land</h2>
+          <form id="landForm" class="app-form">
+            <div class="form-group">
+              <label for="landLocation"><i class="fas fa-map-marker-alt"></i> Land Location</label>
+              <input type="text" id="landLocation" placeholder="Enter a unique land location (e.g., Plot 123, Kitwe)" required>
+            </div>
+            <div class="form-group">
+              <label for="landIpfsHash"><i class="fas fa-file-contract"></i> Document IPFS Hash</label>
+              <input type="text" id="landIpfsHash" placeholder="Enter IPFS hash of land documents" required>
+              <small class="form-hint">Upload your documents to a service like Pinata and paste the hash here.</small>
+            </div>
+            <button id="registerLandBtn" type="submit" class="submit-btn">
+              <i class="fas fa-save"></i> Register Land
+            </button>
+          </form>
+        </div>
+
+        <div id="transferFormContainer" class="form-container" style="display: none;">
+          <h2><i class="fas fa-exchange-alt"></i> Transfer Land Ownership</h2>
+          <form id="transferForm" class="app-form">
+            <div class="form-group">
+              <label for="transferLandId"><i class="fas fa-id-card"></i> Land ID</label>
+              <input type="number" id="transferLandId" placeholder="Enter land ID to transfer" required>
+            </div>
+            <div class="form-group">
+              <label for="newOwnerAddress"><i class="fas fa-user-friends"></i> New Owner Address</label>
+              <input type="text" id="newOwnerAddress" placeholder="Enter new owner's wallet address" required>
+            </div>
+            <button id="transferLandBtn" type="submit" class="submit-btn">
+              <i class="fas fa-paper-plane"></i> Initiate Transfer
+            </button>
+          </form>
+        </div>
+
+        <div id="landsContainer" class="lands-container" style="display: none;">
+          <div class="section-header">
+            <h2><i class="fas fa-layer-group"></i> Land Records</h2>
+          </div>
+          <div id="landsList" class="lands-list"></div>
+        </div>
+
+        <div id="historyContainer" class="history-container" style="display: none;">
+          <div class="approval-section">
+            <h3><i class="fas fa-file-invoice"></i> Registration History</h3>
+            <div id="registrationHistoryContainer" class="history-list"></div>
+          </div>
+          <div class="approval-section">
+            <h3><i class="fas fa-retweet"></i> Transfer History</h3>
+            <div id="transferHistoryContainer" class="history-list"></div>
+          </div>
+        </div>
+
+        <div id="adminPanelContainer" class="admin-panel" style="display: none;">
+          <div id="commissionerPanel" class="approval-section">
+            <h3><i class="fas fa-users"></i> Pending User Requests</h3>
+            <div id="pendingUsersContainer" class="approvals-list">
+              <!-- Content loaded by JS -->
+            </div>
+          </div>
+          <div class="approval-section">
+            <h3><i class="fas fa-hourglass-half"></i> Pending Registration Requests</h3>
+            <div id="registrationRequestsContainer" class="approvals-list"></div>
+          </div>
+          <div class="approval-section">
+            <h3><i class="fas fa-exchange-alt"></i> Pending Transfer Requests</h3>
+            <div id="approvalsContainer" class="approvals-list"></div>
+          </div>
+          <div class="approval-section">
+            <h3><i class="fas fa-times-circle"></i> Finally Rejected Applications</h3>
+            <div id="rejectedRequestsContainer" class="approvals-list"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <div id="notification" class="notification"></div>
+  </div>
+
+  <!-- Resubmit Modal -->
+  <div id="resubmitModal" class="modal-backdrop" style="display:none;">
+    <div class="modal-content">
+      <span class="modal-close" onclick="closeResubmitModal()">&times;</span>
+      <h2>Resubmit Application</h2>
+      <form id="resubmitForm" class="app-form">
+        <input type="hidden" id="resubmitRegId">
+        <div class="form-group">
+          <label for="newLandLocation"><i class="fas fa-map-marker-alt"></i> New Land Location</label>
+          <input type="text" id="newLandLocation" placeholder="Enter corrected land location" required>
+        </div>
+        <div class="form-group">
+          <label for="newLandIpfsHash"><i class="fas fa-file-contract"></i> New Document IPFS Hash</label>
+          <input type="text" id="newLandIpfsHash" placeholder="Enter new IPFS hash" required>
+        </div>
+        <button id="resubmitBtn" type="submit" class="submit-btn">
+          <i class="fas fa-paper-plane"></i> Resubmit
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.8.0/web3.min.js"></script>
+  <script src="src/index.js"></script>
+</body>
+</html>
