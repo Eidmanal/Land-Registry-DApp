@@ -1,893 +1,10 @@
-const contractAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
+/***********************
+ * Config
+ ***********************/
+// IMPORTANT: Make sure this address matches your deployed contract
+const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 
-const contractABI = [
-    {
-      "inputs": [],
-      "stateMutability": "nonpayable",
-      "type": "constructor"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "uint256",
-          "name": "transactionId",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "approver",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "enum LandRegistry.ApprovalStatus",
-          "name": "status",
-          "type": "uint8"
-        }
-      ],
-      "name": "ApprovalReceived",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "authority",
-          "type": "address"
-        }
-      ],
-      "name": "AuthorityVerified",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "uint256",
-          "name": "id",
-          "type": "uint256"
-        },
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "owner",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "string",
-          "name": "location",
-          "type": "string"
-        },
-        {
-          "indexed": false,
-          "internalType": "string",
-          "name": "ipfsHash",
-          "type": "string"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "timestamp",
-          "type": "uint256"
-        }
-      ],
-      "name": "LandRegistered",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "uint256",
-          "name": "transactionId",
-          "type": "uint256"
-        },
-        {
-          "indexed": true,
-          "internalType": "uint256",
-          "name": "landId",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "from",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "to",
-          "type": "address"
-        }
-      ],
-      "name": "LandTransferInitiated",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "uint256",
-          "name": "transactionId",
-          "type": "uint256"
-        },
-        {
-          "indexed": true,
-          "internalType": "uint256",
-          "name": "landId",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "from",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "to",
-          "type": "address"
-        }
-      ],
-      "name": "LandTransferred",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "uint256",
-          "name": "registrationId",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "approver",
-          "type": "address"
-        }
-      ],
-      "name": "RegistrationApproved",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "uint256",
-          "name": "registrationId",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "prospectiveOwner",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "string",
-          "name": "location",
-          "type": "string"
-        },
-        {
-          "indexed": false,
-          "internalType": "string",
-          "name": "ipfsHash",
-          "type": "string"
-        }
-      ],
-      "name": "RegistrationInitiated",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "uint256",
-          "name": "registrationId",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "approver",
-          "type": "address"
-        }
-      ],
-      "name": "RegistrationRejected",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "uint256",
-          "name": "registrationId",
-          "type": "uint256"
-        }
-      ],
-      "name": "RegistrationResubmitted",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "user",
-          "type": "address"
-        }
-      ],
-      "name": "UserApproved",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "user",
-          "type": "address"
-        }
-      ],
-      "name": "UserRejected",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "user",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "string",
-          "name": "nrc",
-          "type": "string"
-        }
-      ],
-      "name": "UserRequested",
-      "type": "event"
-    },
-    {
-      "inputs": [],
-      "name": "COMMISSIONER_OF_LAND",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "KITWE_CITY_COUNCIL",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "LANDS_DEEDS_REGISTRY",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "TREASURY",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "_registrationId",
-          "type": "uint256"
-        }
-      ],
-      "name": "approveRegistration",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "_transactionId",
-          "type": "uint256"
-        }
-      ],
-      "name": "approveTransfer",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_user",
-          "type": "address"
-        }
-      ],
-      "name": "approveUser",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "name": "approvedUsers",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "name": "authorities",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "commissioner",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "_id",
-          "type": "uint256"
-        }
-      ],
-      "name": "getLand",
-      "outputs": [
-        {
-          "components": [
-            {
-              "internalType": "uint256",
-              "name": "id",
-              "type": "uint256"
-            },
-            {
-              "internalType": "address",
-              "name": "owner",
-              "type": "address"
-            },
-            {
-              "internalType": "string",
-              "name": "location",
-              "type": "string"
-            },
-            {
-              "internalType": "string",
-              "name": "ipfsHash",
-              "type": "string"
-            },
-            {
-              "internalType": "uint256",
-              "name": "timestamp",
-              "type": "uint256"
-            }
-          ],
-          "internalType": "struct LandRegistry.Land",
-          "name": "",
-          "type": "tuple"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "user",
-          "type": "address"
-        }
-      ],
-      "name": "getPendingUserNRC",
-      "outputs": [
-        {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "getPendingUsers",
-      "outputs": [
-        {
-          "internalType": "address[]",
-          "name": "",
-          "type": "address[]"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "_registrationId",
-          "type": "uint256"
-        }
-      ],
-      "name": "getRegistration",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "id",
-          "type": "uint256"
-        },
-        {
-          "internalType": "address",
-          "name": "prospectiveOwner",
-          "type": "address"
-        },
-        {
-          "internalType": "string",
-          "name": "location",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "ipfsHash",
-          "type": "string"
-        },
-        {
-          "internalType": "bool",
-          "name": "executed",
-          "type": "bool"
-        },
-        {
-          "internalType": "bool",
-          "name": "isRejected",
-          "type": "bool"
-        },
-        {
-          "internalType": "uint256",
-          "name": "rejectionTimestamp",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "_registrationId",
-          "type": "uint256"
-        }
-      ],
-      "name": "getRegistrationApprovals",
-      "outputs": [
-        {
-          "internalType": "enum LandRegistry.ApprovalStatus",
-          "name": "",
-          "type": "uint8"
-        },
-        {
-          "internalType": "enum LandRegistry.ApprovalStatus",
-          "name": "",
-          "type": "uint8"
-        },
-        {
-          "internalType": "enum LandRegistry.ApprovalStatus",
-          "name": "",
-          "type": "uint8"
-        },
-        {
-          "internalType": "enum LandRegistry.ApprovalStatus",
-          "name": "",
-          "type": "uint8"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "_transactionId",
-          "type": "uint256"
-        }
-      ],
-      "name": "getTransaction",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "landId",
-          "type": "uint256"
-        },
-        {
-          "internalType": "address",
-          "name": "newOwner",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "initiator",
-          "type": "address"
-        },
-        {
-          "internalType": "bool",
-          "name": "executed",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "_transactionId",
-          "type": "uint256"
-        }
-      ],
-      "name": "getTransactionApprovals",
-      "outputs": [
-        {
-          "internalType": "enum LandRegistry.ApprovalStatus",
-          "name": "",
-          "type": "uint8"
-        },
-        {
-          "internalType": "enum LandRegistry.ApprovalStatus",
-          "name": "",
-          "type": "uint8"
-        },
-        {
-          "internalType": "enum LandRegistry.ApprovalStatus",
-          "name": "",
-          "type": "uint8"
-        },
-        {
-          "internalType": "enum LandRegistry.ApprovalStatus",
-          "name": "",
-          "type": "uint8"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "string",
-          "name": "_location",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "_ipfsHash",
-          "type": "string"
-        }
-      ],
-      "name": "initiateRegistration",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "_landId",
-          "type": "uint256"
-        },
-        {
-          "internalType": "address",
-          "name": "_newOwner",
-          "type": "address"
-        }
-      ],
-      "name": "initiateTransfer",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "user",
-          "type": "address"
-        }
-      ],
-      "name": "isApproved",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_address",
-          "type": "address"
-        }
-      ],
-      "name": "isAuthority",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "pure",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "landCounter",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "name": "lands",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "id",
-          "type": "uint256"
-        },
-        {
-          "internalType": "address",
-          "name": "owner",
-          "type": "address"
-        },
-        {
-          "internalType": "string",
-          "name": "location",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "ipfsHash",
-          "type": "string"
-        },
-        {
-          "internalType": "uint256",
-          "name": "timestamp",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
-        }
-      ],
-      "name": "locationExists",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "registrationCounter",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "_registrationId",
-          "type": "uint256"
-        }
-      ],
-      "name": "rejectRegistration",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "_transactionId",
-          "type": "uint256"
-        }
-      ],
-      "name": "rejectTransfer",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_user",
-          "type": "address"
-        }
-      ],
-      "name": "rejectUser",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "string",
-          "name": "_nrc",
-          "type": "string"
-        }
-      ],
-      "name": "requestApproval",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "_registrationId",
-          "type": "uint256"
-        },
-        {
-          "internalType": "string",
-          "name": "_newLocation",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "_newIpfsHash",
-          "type": "string"
-        }
-      ],
-      "name": "resubmitRegistration",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "transactionCounter",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    }
-  ];
+const contractABI = [ { "inputs": [], "stateMutability": "nonpayable", "type": "constructor" }, { "anonymous": false, "inputs": [ { "indexed": true, "internalType": "uint256", "name": "transactionId", "type": "uint256" }, { "indexed": false, "internalType": "address", "name": "approver", "type": "address" }, { "indexed": false, "internalType": "enum LandRegistry.ApprovalStatus", "name": "status", "type": "uint8" } ], "name": "ApprovalReceived", "type": "event" }, { "anonymous": false, "inputs": [ { "indexed": false, "internalType": "address", "name": "authority", "type": "address" } ], "name": "AuthorityVerified", "type": "event" }, { "anonymous": false, "inputs": [ { "indexed": true, "internalType": "uint256", "name": "id", "type": "uint256" }, { "indexed": true, "internalType": "address", "name": "owner", "type": "address" }, { "indexed": false, "internalType": "string", "name": "location", "type": "string" }, { "indexed": false, "internalType": "string", "name": "ipfsHash", "type": "string" }, { "indexed": false, "internalType": "uint256", "name": "timestamp", "type": "uint256" } ], "name": "LandRegistered", "type": "event" }, { "anonymous": false, "inputs": [ { "indexed": true, "internalType": "uint256", "name": "transactionId", "type": "uint256" }, { "indexed": true, "internalType": "uint256", "name": "landId", "type": "uint256" }, { "indexed": false, "internalType": "address", "name": "from", "type": "address" }, { "indexed": false, "internalType": "address", "name": "to", "type": "address" } ], "name": "LandTransferInitiated", "type": "event" }, { "anonymous": false, "inputs": [ { "indexed": true, "internalType": "uint256", "name": "transactionId", "type": "uint256" }, { "indexed": true, "internalType": "uint256", "name": "landId", "type": "uint256" }, { "indexed": false, "internalType": "address", "name": "from", "type": "address" }, { "indexed": false, "internalType": "address", "name": "to", "type": "address" } ], "name": "LandTransferred", "type": "event" }, { "anonymous": false, "inputs": [ { "indexed": true, "internalType": "uint256", "name": "registrationId", "type": "uint256" }, { "indexed": false, "internalType": "address", "name": "approver", "type": "address" } ], "name": "RegistrationApproved", "type": "event" }, { "anonymous": false, "inputs": [ { "indexed": true, "internalType": "uint256", "name": "registrationId", "type": "uint256" }, { "indexed": false, "internalType": "address", "name": "prospectiveOwner", "type": "address" }, { "indexed": false, "internalType": "string", "name": "location", "type": "string" }, { "indexed": false, "internalType": "string", "name": "ipfsHash", "type": "string" } ], "name": "RegistrationInitiated", "type": "event" }, { "anonymous": false, "inputs": [ { "indexed": true, "internalType": "uint256", "name": "registrationId", "type": "uint256" }, { "indexed": false, "internalType": "address", "name": "approver", "type": "address" } ], "name": "RegistrationRejected", "type": "event" }, { "anonymous": false, "inputs": [ { "indexed": true, "internalType": "uint256", "name": "registrationId", "type": "uint256" } ], "name": "RegistrationResubmitted", "type": "event" }, { "anonymous": false, "inputs": [ { "indexed": true, "internalType": "address", "name": "user", "type": "address" } ], "name": "UserApproved", "type": "event" }, { "anonymous": false, "inputs": [ { "indexed": true, "internalType": "address", "name": "user", "type": "address" } ], "name": "UserRejected", "type": "event" }, { "anonymous": false, "inputs": [ { "indexed": true, "internalType": "address", "name": "user", "type": "address" }, { "indexed": false, "internalType": "string", "name": "nrc", "type": "string" } ], "name": "UserRequested", "type": "event" }, { "inputs": [], "name": "COMMISSIONER_OF_LAND", "outputs": [ { "internalType": "address", "name": "", "type": "address" } ], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "KITWE_CITY_COUNCIL", "outputs": [ { "internalType": "address", "name": "", "type": "address" } ], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "LANDS_DEEDS_REGISTRY", "outputs": [ { "internalType": "address", "name": "", "type": "address" } ], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "TREASURY", "outputs": [ { "internalType": "address", "name": "", "type": "address" } ], "stateMutability": "view", "type": "function" }, { "inputs": [ { "internalType": "uint256", "name": "_registrationId", "type": "uint256" } ], "name": "approveRegistration", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [ { "internalType": "uint256", "name": "_transactionId", "type": "uint256" } ], "name": "approveTransfer", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [ { "internalType": "address", "name": "_user", "type": "address" } ], "name": "approveUser", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [ { "internalType": "address", "name": "", "type": "address" } ], "name": "approvedUsers", "outputs": [ { "internalType": "bool", "name": "", "type": "bool" } ], "stateMutability": "view", "type": "function" }, { "inputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "name": "authorities", "outputs": [ { "internalType": "address", "name": "", "type": "address" } ], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "commissioner", "outputs": [ { "internalType": "address", "name": "", "type": "address" } ], "stateMutability": "view", "type": "function" }, { "inputs": [ { "internalType": "uint256", "name": "_id", "type": "uint256" } ], "name": "getLand", "outputs": [ { "components": [ { "internalType": "uint256", "name": "id", "type": "uint256" }, { "internalType": "address", "name": "owner", "type": "address" }, { "internalType": "string", "name": "location", "type": "string" }, { "internalType": "string", "name": "ipfsHash", "type": "string" }, { "internalType": "uint256", "name": "timestamp", "type": "uint256" } ], "internalType": "struct LandRegistry.Land", "name": "", "type": "tuple" } ], "stateMutability": "view", "type": "function" }, { "inputs": [ { "internalType": "address", "name": "user", "type": "address" } ], "name": "getPendingUserNRC", "outputs": [ { "internalType": "string", "name": "", "type": "string" } ], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "getPendingUsers", "outputs": [ { "internalType": "address[]", "name": "", "type": "address[]" } ], "stateMutability": "view", "type": "function" }, { "inputs": [ { "internalType": "uint256", "name": "_registrationId", "type": "uint256" } ], "name": "getRegistration", "outputs": [ { "internalType": "uint256", "name": "id", "type": "uint256" }, { "internalType": "address", "name": "prospectiveOwner", "type": "address" }, { "internalType": "string", "name": "location", "type": "string" }, { "internalType": "string", "name": "ipfsHash", "type": "string" }, { "internalType": "bool", "name": "executed", "type": "bool" }, { "internalType": "bool", "name": "isRejected", "type": "bool" }, { "internalType": "uint256", "name": "rejectionTimestamp", "type": "uint256" } ], "stateMutability": "view", "type": "function" }, { "inputs": [ { "internalType": "uint256", "name": "_registrationId", "type": "uint256" } ], "name": "getRegistrationApprovals", "outputs": [ { "internalType": "enum LandRegistry.ApprovalStatus", "name": "", "type": "uint8" }, { "internalType": "enum LandRegistry.ApprovalStatus", "name": "", "type": "uint8" }, { "internalType": "enum LandRegistry.ApprovalStatus", "name": "", "type": "uint8" }, { "internalType": "enum LandRegistry.ApprovalStatus", "name": "", "type": "uint8" } ], "stateMutability": "view", "type": "function" }, { "inputs": [ { "internalType": "uint256", "name": "_transactionId", "type": "uint256" } ], "name": "getTransaction", "outputs": [ { "internalType": "uint256", "name": "landId", "type": "uint256" }, { "internalType": "address", "name": "newOwner", "type": "address" }, { "internalType": "address", "name": "initiator", "type": "address" }, { "internalType": "bool", "name": "executed", "type": "bool" } ], "stateMutability": "view", "type": "function" }, { "inputs": [ { "internalType": "uint256", "name": "_transactionId", "type": "uint256" } ], "name": "getTransactionApprovals", "outputs": [ { "internalType": "enum LandRegistry.ApprovalStatus", "name": "", "type": "uint8" }, { "internalType": "enum LandRegistry.ApprovalStatus", "name": "", "type": "uint8" }, { "internalType": "enum LandRegistry.ApprovalStatus", "name": "", "type": "uint8" }, { "internalType": "enum LandRegistry.ApprovalStatus", "name": "", "type": "uint8" } ], "stateMutability": "view", "type": "function" }, { "inputs": [ { "internalType": "string", "name": "_location", "type": "string" }, { "internalType": "string", "name": "_ipfsHash", "type": "string" } ], "name": "initiateRegistration", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [ { "internalType": "uint256", "name": "_landId", "type": "uint256" }, { "internalType": "address", "name": "_newOwner", "type": "address" } ], "name": "initiateTransfer", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [ { "internalType": "address", "name": "user", "type": "address" } ], "name": "isApproved", "outputs": [ { "internalType": "bool", "name": "", "type": "bool" } ], "stateMutability": "view", "type": "function" }, { "inputs": [ { "internalType": "address", "name": "_address", "type": "address" } ], "name": "isAuthority", "outputs": [ { "internalType": "bool", "name": "", "type": "bool" } ], "stateMutability": "pure", "type": "function" }, { "inputs": [], "name": "landCounter", "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "stateMutability": "view", "type": "function" }, { "inputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "name": "lands", "outputs": [ { "internalType": "uint256", "name": "id", "type": "uint256" }, { "internalType": "address", "name": "owner", "type": "address" }, { "internalType": "string", "name": "location", "type": "string" }, { "internalType": "string", "name": "ipfsHash", "type": "string" }, { "internalType": "uint256", "name": "timestamp", "type": "uint256" } ], "stateMutability": "view", "type": "function" }, { "inputs": [ { "internalType": "string", "name": "", "type": "string" } ], "name": "locationExists", "outputs": [ { "internalType": "bool", "name": "", "type": "bool" } ], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "registrationCounter", "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "stateMutability": "view", "type": "function" }, { "inputs": [ { "internalType": "uint256", "name": "_registrationId", "type": "uint256" } ], "name": "rejectRegistration", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [ { "internalType": "uint256", "name": "_transactionId", "type": "uint256" } ], "name": "rejectTransfer", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [ { "internalType": "address", "name": "_user", "type": "address" } ], "name": "rejectUser", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [ { "internalType": "string", "name": "_nrc", "type": "string" } ], "name": "requestApproval", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [ { "internalType": "uint256", "name": "_registrationId", "type": "uint256" }, { "internalType": "string", "name": "_newLocation", "type": "string" }, { "internalType": "string", "name": "_newIpfsHash", "type": "string" } ], "name": "resubmitRegistration", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "transactionCounter", "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "stateMutability": "view", "type": "function" } ];
 
 const AUTHORITIES = {
   KITWE_CITY_COUNCIL: "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
@@ -904,6 +21,7 @@ let web3, contract, currentAccount;
 window.addEventListener("DOMContentLoaded", init);
 
 async function init() {
+  // Setup listeners that only need to be set once
   document.getElementById("connectWalletBtn").addEventListener('click', connectWallet);
   setupFormEventListeners();
 
@@ -912,6 +30,7 @@ async function init() {
     window.ethereum.on("accountsChanged", handleAccountsChanged);
     window.ethereum.on("chainChanged", () => window.location.reload());
     
+    // Check if we're already connected from a previous session
     const accounts = await web3.eth.getAccounts();
     if (accounts.length > 0) {
       await handleConnection(accounts);
@@ -938,63 +57,69 @@ async function handleConnection(accounts) {
     currentAccount = accounts[0];
     contract = new web3.eth.Contract(contractABI, contractAddress);
     
-    setConnectedUI(currentAccount);
+    // This is the single point of truth for updating the UI after a connection
     await updateUIState();
 }
 
 function handleAccountsChanged(accounts) {
     if (accounts.length > 0) {
+        // User switched to a new account
         handleConnection(accounts);
     } else {
+        // User disconnected
         currentAccount = null;
-        setConnectedUI(null);
+        contract = null;
         updateUIState();
     }
 }
 
 /***********************
- * UI State Controller
+ * UI State Controller (The "Brain")
  ***********************/
 async function updateUIState() {
+    setConnectedUI(currentAccount);
+
     if (!currentAccount) {
+        // If not connected, show the connect message and hide everything else.
         document.getElementById("dashboard").style.display = "none";
         document.getElementById("userRegistrationWrap").style.display = "none";
         document.getElementById("connectMessage").style.display = "flex";
         return;
     }
 
-    // --- START DEBUGGING BLOCK ---
+    // If we are connected, check the user's approval status
     try {
-        const commissionerAddressFromContract = await contract.methods.commissioner().call();
-        console.log("%c[DEBUG] Currently connected account:", "color: blue; font-weight: bold;", currentAccount);
-        console.log("%c[DEBUG] Commissioner address from contract:", "color: green; font-weight: bold;", commissionerAddressFromContract);
+        const isApproved = await contract.methods.isApproved(currentAccount).call();
         
-        if (currentAccount.toLowerCase() === commissionerAddressFromContract.toLowerCase()) {
-            console.log("%c[DEBUG] Match! This account IS the commissioner.", "color: green;");
+        if (isApproved) {
+            // --- USER IS APPROVED ---
+            document.getElementById("userRegistrationWrap").style.display = "none";
+            document.getElementById("dashboard").style.display = "block";
+
+            // Check for special roles
+            const isCommissioner = await checkIsCommissioner();
+            document.getElementById("commissionerPanel").style.display = isCommissioner ? "block" : "none";
+            if (isCommissioner) {
+              await loadPendingUsersForCommissioner();
+              showSection('adminPanelContainer');
+            }
+
+            document.querySelectorAll(".admin-only").forEach(el => {
+                el.style.display = isAuthority() ? "flex" : "none";
+            });
+            
+            await loadData();
         } else {
-            console.log("%c[DEBUG] Mismatch. This account IS NOT the commissioner.", "color: red;");
+            // --- USER IS NOT APPROVED ---
+            document.getElementById("userRegistrationWrap").style.display = "block";
+            document.getElementById("dashboard").style.display = "none";
         }
-    } catch (err) {
-        console.error("[DEBUG] Failed to get commissioner address. Is the contract address in index.js correct?", err);
-    }
-    // --- END DEBUGGING BLOCK ---
-
-    await enforceAccessGate();
-    
-    const isApproved = await contract.methods.isApproved(currentAccount).call();
-    if (isApproved) {
-        const isCommissioner = await checkIsCommissioner();
-        document.getElementById("commissionerPanel").style.display = isCommissioner ? "block" : "none";
-        if (isCommissioner) {
-          await loadPendingUsersForCommissioner();
-          showSection('adminPanelContainer');
-        }
-
-        document.querySelectorAll(".admin-only").forEach(el => {
-            el.style.display = isAuthority() ? "flex" : "none";
-        });
-        
-        await loadData();
+    } catch (e) {
+        console.error("Critical Error in updateUIState:", e);
+        showNotification("Could not check user status. Is your wallet connected to the correct network?", "error");
+        // Hide everything as a safe fallback
+        document.getElementById("dashboard").style.display = "none";
+        document.getElementById("userRegistrationWrap").style.display = "none";
     }
 }
 
@@ -1016,29 +141,6 @@ function setConnectedUI(addr) {
   }
 }
 
-async function enforceAccessGate() {
-    const userWrap = document.getElementById("userRegistrationWrap");
-    const dashboard = document.getElementById("dashboard");
-    
-    userWrap.style.display = "none";
-    dashboard.style.display = "none";
-
-    if (!currentAccount || !contract) return;
-
-    try {
-        const isApproved = await contract.methods.isApproved(currentAccount).call();
-        if (isApproved) {
-            dashboard.style.display = "block";
-        } else {
-            userWrap.style.display = "block";
-        }
-    } catch (e) {
-        console.error("Error in enforceAccessGate:", e);
-        userWrap.style.display = "block";
-        showNotification("Could not verify user status. Please ensure you are on the correct network.", "error");
-    }
-}
-
 function showSection(idToShow) {
   const ids = ["landFormContainer", "transferFormContainer", "landsContainer", "historyContainer", "adminPanelContainer"];
   ids.forEach((id) => {
@@ -1058,7 +160,7 @@ function showSection(idToShow) {
 }
 
 /***********************
- * Event Listeners
+ * Event Listeners (Setup Once)
  ***********************/
 function setupFormEventListeners() {
   document.getElementById("showRegisterFormBtn").addEventListener("click", () => showSection("landFormContainer"));

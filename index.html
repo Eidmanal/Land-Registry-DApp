@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Land Management DApp</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
-  <link rel="stylesheet" href="src/styles.css"/>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="src/styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet" />
 </head>
+
 <body>
   <div class="app-container">
     <header class="app-header">
@@ -35,7 +38,12 @@
       <!-- User submits NRC to request approval -->
       <div id="userRegistrationContainer" class="form-container" style="display:block; padding:16px;">
         <h2><i class="fas fa-id-card"></i> Request Account Access</h2>
-        <p>Your account must be approved by the Commissioner to use this system.</p>
+        <!--- <p>Your account must be approved by the Commissioner to use this system.</p> -->
+        <div class="notification warning show"
+          style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 1000;">
+          <i class="fas fa-exclamation-triangle"></i> Your account must be approved by the Commissioner to use this system.
+        </div>
+
         <form id="userRegistrationForm" class="app-form">
           <div class="form-group">
             <label for="nrcInput"><i class="fas fa-id-badge"></i> NRC Number</label>
@@ -48,7 +56,7 @@
       </div>
     </div>
     <!-- END: User Registration / Approval UI -->
-    
+
     <!-- This is the main dashboard, shown only after connection AND approval -->
     <main class="app-main" id="dashboard" style="display:none;">
       <nav class="app-nav">
@@ -72,7 +80,8 @@
           <form id="landForm" class="app-form">
             <div class="form-group">
               <label for="landLocation"><i class="fas fa-map-marker-alt"></i> Land Location</label>
-              <input type="text" id="landLocation" placeholder="Enter a unique land location (e.g., Plot 123, Kitwe)" required>
+              <input type="text" id="landLocation" placeholder="Enter a unique land location (e.g., Plot 123, Kitwe)"
+                required>
             </div>
             <div class="form-group">
               <label for="landIpfsHash"><i class="fas fa-file-contract"></i> Document IPFS Hash</label>
@@ -171,4 +180,5 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.8.0/web3.min.js"></script>
   <script src="src/index.js"></script>
 </body>
+
 </html>
