@@ -5,6 +5,31 @@ const contractABI = [
         {
           "indexed": false,
           "internalType": "uint256",
+          "name": "transactionId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "approver",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "enum LandRegistry.ApprovalStatus",
+          "name": "status",
+          "type": "uint8"
+        }
+      ],
+      "name": "ApprovalReceived",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
           "name": "id",
           "type": "uint256"
         },
@@ -34,6 +59,68 @@ const contractABI = [
         }
       ],
       "name": "LandRegistered",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "transactionId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "landId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "from",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        }
+      ],
+      "name": "LandTransferInitiated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "transactionId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "landId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "from",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        }
+      ],
+      "name": "LandTransferred",
       "type": "event"
     },
     {
@@ -103,6 +190,19 @@ const contractABI = [
         }
       ],
       "name": "RegistrationRejected",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "registrationId",
+          "type": "uint256"
+        }
+      ],
+      "name": "RegistrationResubmitted",
       "type": "event"
     },
     {
@@ -243,6 +343,19 @@ const contractABI = [
     {
       "inputs": [
         {
+          "internalType": "uint256",
+          "name": "_transactionId",
+          "type": "uint256"
+        }
+      ],
+      "name": "approveTransfer",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
           "internalType": "address",
           "name": "_userAddress",
           "type": "address"
@@ -254,6 +367,71 @@ const contractABI = [
       "type": "function"
     },
     {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "name": "deedHashExists",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_id",
+          "type": "uint256"
+        }
+      ],
+      "name": "getLand",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "id",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "owner",
+              "type": "address"
+            },
+            {
+              "internalType": "string",
+              "name": "location",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "ipfsHash",
+              "type": "string"
+            },
+            {
+              "internalType": "uint256",
+              "name": "timestamp",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct LandRegistry.Land",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
       "inputs": [],
       "name": "getPendingVerificationAddresses",
       "outputs": [
@@ -261,6 +439,108 @@ const contractABI = [
           "internalType": "address[]",
           "name": "",
           "type": "address[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_registrationId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getRegistrationApprovals",
+      "outputs": [
+        {
+          "internalType": "enum LandRegistry.ApprovalStatus",
+          "name": "",
+          "type": "uint8"
+        },
+        {
+          "internalType": "enum LandRegistry.ApprovalStatus",
+          "name": "",
+          "type": "uint8"
+        },
+        {
+          "internalType": "enum LandRegistry.ApprovalStatus",
+          "name": "",
+          "type": "uint8"
+        },
+        {
+          "internalType": "enum LandRegistry.ApprovalStatus",
+          "name": "",
+          "type": "uint8"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_transactionId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getTransactionApprovals",
+      "outputs": [
+        {
+          "internalType": "enum LandRegistry.ApprovalStatus",
+          "name": "",
+          "type": "uint8"
+        },
+        {
+          "internalType": "enum LandRegistry.ApprovalStatus",
+          "name": "",
+          "type": "uint8"
+        },
+        {
+          "internalType": "enum LandRegistry.ApprovalStatus",
+          "name": "",
+          "type": "uint8"
+        },
+        {
+          "internalType": "enum LandRegistry.ApprovalStatus",
+          "name": "",
+          "type": "uint8"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_userAddress",
+          "type": "address"
+        }
+      ],
+      "name": "getVerificationApprovals",
+      "outputs": [
+        {
+          "internalType": "enum LandRegistry.ApprovalStatus",
+          "name": "",
+          "type": "uint8"
+        },
+        {
+          "internalType": "enum LandRegistry.ApprovalStatus",
+          "name": "",
+          "type": "uint8"
+        },
+        {
+          "internalType": "enum LandRegistry.ApprovalStatus",
+          "name": "",
+          "type": "uint8"
+        },
+        {
+          "internalType": "enum LandRegistry.ApprovalStatus",
+          "name": "",
+          "type": "uint8"
         }
       ],
       "stateMutability": "view",
@@ -287,20 +567,19 @@ const contractABI = [
     {
       "inputs": [
         {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
-        }
-      ],
-      "name": "ipfsHashExists",
-      "outputs": [
+          "internalType": "uint256",
+          "name": "_landId",
+          "type": "uint256"
+        },
         {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
+          "internalType": "address",
+          "name": "_newOwner",
+          "type": "address"
         }
       ],
-      "stateMutability": "view",
+      "name": "initiateTransfer",
+      "outputs": [],
+      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
@@ -490,12 +769,48 @@ const contractABI = [
     {
       "inputs": [
         {
+          "internalType": "uint256",
+          "name": "_transactionId",
+          "type": "uint256"
+        }
+      ],
+      "name": "rejectTransfer",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
           "internalType": "address",
-          "name": "userAddress",
+          "name": "_userAddress",
           "type": "address"
         }
       ],
       "name": "rejectVerification",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_registrationId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "_newLocation",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "_newIpfsHash",
+          "type": "string"
+        }
+      ],
+      "name": "resubmitRegistration",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -511,6 +826,53 @@ const contractABI = [
       "name": "submitVerification",
       "outputs": [],
       "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "transactionCounter",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "transactions",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "landId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "initiator",
+          "type": "address"
+        },
+        {
+          "internalType": "bool",
+          "name": "executed",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
       "type": "function"
     },
     {

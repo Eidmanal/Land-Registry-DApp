@@ -2,544 +2,539 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Land Management DApp</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
-    <style>
-        :root {
-            --primary-color: #4361ee;
-            --secondary-color: #3f37c9;
-            --success-color: #4cc9f0;
-            --danger-color: #f72585;
-            --light-color: #f8f9fa;
-            --dark-color: #212529;
-            --white-color: #ffffff;
-            --border-radius: 8px;
-            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            --transition: all 0.3s ease;
-        }
-        body { font-family: 'Poppins', sans-serif; background-color: #f5f7fa; color: var(--dark-color); margin: 0; padding: 20px; }
-        .app-container { max-width: 1200px; margin: 20px auto; background-color: var(--white-color); border-radius: var(--border-radius); box-shadow: var(--box-shadow); }
-        .app-header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; padding: 20px; border-bottom: 1px solid #eee; }
-        .app-header h1 { color: var(--primary-color); margin: 0; }
-        .wallet-section { display: flex; align-items: center; gap: 15px; margin-top: 10px; }
-        .wallet-address, .verification-status { background-color: var(--light-color); padding: 8px 15px; border-radius: var(--border-radius); font-size: 0.9rem; }
-        .connect-message { text-align: center; padding: 20px; background-color: #fff3cd; color: #856404; border-radius: var(--border-radius); margin: 20px; }
-        .app-nav { display: flex; gap: 10px; padding: 20px; border-bottom: 1px solid #eee; }
-        .nav-btn { background: none; border: 1px solid #ddd; padding: 10px 15px; border-radius: var(--border-radius); cursor: pointer; transition: var(--transition); font-weight: 500; }
-        .nav-btn.active, .nav-btn:hover { background-color: var(--primary-color); color: var(--white-color); border-color: var(--primary-color); }
-        .nav-btn:disabled { background-color: #e9ecef; color: #6c757d; cursor: not-allowed; }
-        .admin-only { display: none; }
-        .content-section { padding: 20px; }
-        .form-container, .lands-container, .history-container, .admin-panel { border: 1px solid #eee; border-radius: var(--border-radius); padding: 20px; }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; font-weight: 500; }
-        input[type="text"], input[type="file"] { width: 100%; padding: 12px; border-radius: var(--border-radius); border: 1px solid #ccc; box-sizing: border-box; }
-        .submit-btn { width: 100%; padding: 12px; background-color: var(--primary-color); color: var(--white-color); border: none; cursor: pointer; border-radius: var(--border-radius); }
-        .lands-list, .approvals-list, .history-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
-        .land-card, .transaction-card, .request-card, .history-card { background-color: #fff; padding: 20px; border-radius: var(--border-radius); box-shadow: var(--box-shadow); }
-        .action-btn { width: auto; padding: 8px 12px; font-size: 0.9rem; border: none; color: white; border-radius: 5px; cursor: pointer; }
-        .approve-btn { background-color: #28a745; }
-        .reject-btn { background-color: #dc3545; }
-        .notification { position: fixed; bottom: 20px; right: 20px; padding: 15px 25px; border-radius: var(--border-radius); box-shadow: var(--box-shadow); color: var(--white-color); opacity: 0; visibility: hidden; transition: all 0.3s ease; transform: translateY(100px); z-index: 1000; }
-        .notification.show { opacity: 1; visibility: visible; transform: translateY(0); }
-        .notification.success { background-color: var(--success-color); color: var(--dark-color); }
-        .notification.error { background-color: var(--danger-color); }
-        .loading, .no-data { text-align: center; padding: 20px; color: #6c757d; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Land Management DApp</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="src/styles.css">
+  <style>
+    :root {
+      --primary-color: #4361ee;
+      --secondary-color: #3f37c9;
+      --success-color: #4cc9f0;
+      --danger-color: #f72585;
+      --light-color: #f8f9fa;
+      --dark-color: #212529;
+      --white-color: #ffffff;
+      --border-radius: 8px;
+      --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      --transition: all 0.3s ease;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f5f7fa;
+      color: var(--dark-color);
+      margin: 0;
+      padding: 20px;
+    }
+
+    .app-container {
+      max-width: 1200px;
+      margin: 20px auto;
+      background-color: var(--white-color);
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+    }
+
+    .app-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .app-header h1 {
+      color: var(--primary-color);
+      margin: 0;
+    }
+
+    .wallet-section {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-top: 10px;
+    }
+
+    .wallet-address,
+    .verification-status {
+      background-color: var(--light-color);
+      padding: 8px 15px;
+      border-radius: var(--border-radius);
+      font-size: 0.9rem;
+    }
+
+    .refresh-btn {
+      background: none;
+      border: 1px solid #ddd;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .refresh-btn:hover {
+      background-color: #e9ecef;
+    }
+
+    .connect-message {
+      text-align: center;
+      padding: 20px;
+      background-color: #fff3cd;
+      color: #856404;
+      border-radius: var(--border-radius);
+      margin: 20px;
+    }
+
+    .app-nav {
+      display: flex;
+      gap: 10px;
+      padding: 20px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .nav-btn {
+      background: none;
+      border: 1px solid #ddd;
+      padding: 10px 15px;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: var(--transition);
+      font-weight: 500;
+    }
+
+    .nav-btn.active,
+    .nav-btn:hover {
+      background-color: var(--primary-color);
+      color: var(--white-color);
+      border-color: var(--primary-color);
+    }
+
+    .nav-btn:disabled {
+      background-color: #e9ecef;
+      color: #6c757d;
+      cursor: not-allowed;
+    }
+
+    .admin-only {
+      display: none;
+    }
+
+    .content-section {
+      padding: 20px;
+    }
+
+    .form-container,
+    .lands-container,
+    .history-container,
+    .admin-panel {
+      border: 1px solid #eee;
+      border-radius: var(--border-radius);
+      padding: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+    }
+
+    input[type="text"],
+    input[type="file"] {
+      width: 100%;
+      padding: 12px;
+      border-radius: var(--border-radius);
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 12px;
+      background-color: var(--primary-color);
+      color: var(--white-color);
+      border: none;
+      cursor: pointer;
+      border-radius: var(--border-radius);
+    }
+
+    .lands-list,
+    .approvals-list,
+    .history-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .land-card,
+    .transaction-card,
+    .request-card,
+    .history-card {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+    }
+
+    .action-btn {
+      width: auto;
+      padding: 8px 12px;
+      font-size: 0.9rem;
+      border: none;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .approve-btn {
+      background-color: #28a745;
+    }
+
+    .reject-btn {
+      background-color: #dc3545;
+    }
+
+    .notification {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 15px 25px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      color: var(--white-color);
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      transform: translateY(100px);
+      z-index: 1000;
+    }
+
+    .notification.show {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .notification.success {
+      background-color: var(--success-color);
+      color: var(--dark-color);
+    }
+
+    .notification.error {
+      background-color: var(--danger-color);
+    }
+
+    .loading,
+    .no-data {
+      text-align: center;
+      padding: 20px;
+      color: #6c757d;
+    }
+  </style>
 </head>
 
 <body>
-    <div class="app-container">
-        <header class="app-header">
-            <h1><i class="fas fa-landmark"></i> Land Management DApp</h1>
-            <div class="wallet-section">
-                <div id="userAddress" class="wallet-address"><i class="fas fa-user-circle"></i> Not connected</div>
-                <div id="verificationStatus" class="verification-status"></div>
-            </div>
-        </header>
+  <div class="app-container">
+    <header class="app-header">
+      <h1><i class="fas fa-landmark"></i> Land Management DApp</h1>
+      <div class="wallet-section">
+        <div id="userAddress" class="wallet-address"><i class="fas fa-user-circle"></i> Not connected</div>
+        <div id="verificationStatus" class="verification-status"></div>
+        <button id="refreshStatusBtn" class="refresh-btn" title="Refresh Status"><i
+            class="fas fa-sync-alt"></i></button>
+      </div>
+    </header>
 
-        <div id="connectMessage" class="connect-message">
-            <i class="fas fa-info-circle"></i> Please connect your wallet to use the DApp.
+    <div id="connectMessage" class="connect-message">
+      <i class="fas fa-info-circle"></i> Please connect your wallet to use the DApp.
+    </div>
+
+    <main id="dashboard" style="display:none;">
+      <nav class="app-nav" id="mainNav">
+        <button id="showRegisterFormBtn" class="nav-btn">Register Land</button>
+        <button id="showAllLandsBtn" class="nav-btn">View Lands</button>
+        <button id="showHistoryBtn" class="nav-btn">History</button>
+        <button id="showAdminPanelBtn" class="nav-btn admin-only">Admin Panel</button>
+      </nav>
+
+      <div class="content-section">
+        <div id="verificationContainer" class="form-container" style="display:none;"></div>
+        <div id="landFormContainer" class="form-container" style="display: none;">
+          <form id="landForm" class="app-form">
+            <h2><i class="fas fa-map-marked-alt"></i> Register New Land</h2>
+            <div class="form-group"><label for="landLocation">Location</label><input type="text" id="landLocation"
+                placeholder="e.g. Plot 123, Kitwe" required></div>
+            <div class="form-group"><label for="landDeedFile">Upload Title Deed Image</label><input type="file"
+                id="landDeedFile" accept="image/*" required></div>
+            <button type="submit" class="submit-btn">Initiate Registration</button>
+          </form>
+        </div>
+        <div id="transferFormContainer" class="form-container" style="display: none;"></div>
+        <div id="landsContainer" class="lands-container" style="display: none;">
+          <div id="landsList" class="lands-list"></div>
+        </div>
+        <div id="historyContainer" class="history-container" style="display: none;">
+          <div id="registrationHistoryContainer"></div>
+          <div id="transferHistoryContainer"></div>
         </div>
 
-        <main id="dashboard" style="display:none;">
-            <nav class="app-nav" id="mainNav">
-                <button id="showRegisterFormBtn" class="nav-btn">Register Land</button>
-                <button id="showAllLandsBtn" class="nav-btn">View Lands</button>
-                <button id="showHistoryBtn" class="nav-btn">History</button>
-                <button id="showAdminPanelBtn" class="nav-btn admin-only">Admin Panel</button>
-            </nav>
+        <div id="adminPanelContainer" class="admin-panel" style="display: none;">
+          <h2><i class="fas fa-user-shield"></i> Administration</h2>
+          <div class="approval-section">
+            <h3><i class="fas fa-user-check"></i> Pending User Verifications</h3>
+            <div id="userVerificationsContainer" class="approvals-list"></div>
+          </div>
+          <div class="approval-section">
+            <h3><i class="fas fa-file-invoice"></i> Pending Registration Requests</h3>
+            <div id="registrationRequestsContainer" class="approvals-list"></div>
+          </div>
+          <div class="approval-section">
+            <h3><i class="fas fa-exchange-alt"></i> Pending Transfer Requests</h3>
+            <div id="transferRequestsContainer" class="approvals-list"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <div id="notification" class="notification"></div>
 
-            <div class="content-section">
-                <div id="verificationContainer" class="form-container" style="display:none;"></div>
-                <div id="landFormContainer" class="form-container" style="display: none;">
-                    <form id="landForm" class="app-form">
-                        <h2><i class="fas fa-map-marked-alt"></i> Register New Land</h2>
-                        <div class="form-group"><label for="landLocation">Location</label><input type="text" id="landLocation" placeholder="e.g. Plot 123, Kitwe" required></div>
-                        <div class="form-group"><label for="landDeedFile">Upload Title Deed Image</label><input type="file" id="landDeedFile" accept="image/*" required></div>
-                        <button type="submit" class="submit-btn">Initiate Registration</button>
-                    </form>
-                </div>
-                <div id="transferFormContainer" class="form-container" style="display: none;"></div>
-                <div id="landsContainer" class="lands-container" style="display: none;"><div id="landsList" class="lands-list"></div></div>
-                <div id="historyContainer" class="history-container" style="display: none;"><div id="registrationHistoryContainer"></div><div id="transferHistoryContainer"></div></div>
-                
-                <div id="adminPanelContainer" class="admin-panel" style="display: none;">
-                    <h2><i class="fas fa-user-shield"></i> Administration</h2>
-                    <div class="approval-section">
-                        <h3><i class="fas fa-user-check"></i> Pending User Verifications</h3>
-                        <div id="userVerificationsContainer" class="approvals-list"></div>
-                    </div>
-                    <div class="approval-section">
-                        <h3><i class="fas fa-file-invoice"></i> Pending Registration Requests</h3>
-                        <div id="registrationRequestsContainer" class="approvals-list"></div>
-                    </div>
-                    <div class="approval-section">
-                        <h3><i class="fas fa-exchange-alt"></i> Pending Transfer Requests</h3>
-                        <div id="transferRequestsContainer" class="approvals-list"></div>
-                    </div>
-                </div>
-            </div>
-        </main>
-    </div>
-    <div id="notification" class="notification"></div>
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
-    
-    <script>
-        // --- CONFIGURATION ---
-        const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
-        const backendUrl = "http://127.0.0.1:5000";
-        const contractABI = [
-    {
-      "anonymous": false,
-      "inputs": [
-        { "indexed": false, "internalType": "uint256", "name": "id", "type": "uint256" },
-        { "indexed": false, "internalType": "address", "name": "owner", "type": "address" },
-        { "indexed": false, "internalType": "string", "name": "location", "type": "string" },
-        { "indexed": false, "internalType": "string", "name": "ipfsHash", "type": "string" },
-        { "indexed": false, "internalType": "uint256", "name": "timestamp", "type": "uint256" }
-      ],
-      "name": "LandRegistered", "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        { "indexed": false, "internalType": "uint256", "name": "registrationId", "type": "uint256" },
-        { "indexed": false, "internalType": "address", "name": "approver", "type": "address" }
-      ],
-      "name": "RegistrationApproved", "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        { "indexed": false, "internalType": "uint256", "name": "registrationId", "type": "uint256" },
-        { "indexed": false, "internalType": "address", "name": "prospectiveOwner", "type": "address" },
-        { "indexed": false, "internalType": "string", "name": "location", "type": "string" },
-        { "indexed": false, "internalType": "string", "name": "ipfsHash", "type": "string" }
-      ],
-      "name": "RegistrationInitiated", "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        { "indexed": false, "internalType": "uint256", "name": "registrationId", "type": "uint256" },
-        { "indexed": false, "internalType": "address", "name": "approver", "type": "address" }
-      ],
-      "name": "RegistrationRejected", "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [ { "indexed": true, "internalType": "address", "name": "user", "type": "address" } ],
-      "name": "UserVerified", "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        { "indexed": true, "internalType": "address", "name": "user", "type": "address" },
-        { "indexed": true, "internalType": "address", "name": "approver", "type": "address" }
-      ],
-      "name": "VerificationApproved", "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        { "indexed": true, "internalType": "address", "name": "user", "type": "address" },
-        { "indexed": true, "internalType": "address", "name": "approver", "type": "address" }
-      ],
-      "name": "VerificationRejected", "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        { "indexed": true, "internalType": "address", "name": "user", "type": "address" },
-        { "indexed": false, "internalType": "string", "name": "documentIpfsHash", "type": "string" }
-      ],
-      "name": "VerificationSubmitted", "type": "event"
-    },
-    {
-      "inputs": [], "name": "COMMISSIONER_OF_LAND",
-      "outputs": [ { "internalType": "address", "name": "", "type": "address" } ],
-      "stateMutability": "view", "type": "function"
-    },
-    {
-      "inputs": [], "name": "KITWE_CITY_COUNCIL",
-      "outputs": [ { "internalType": "address", "name": "", "type": "address" } ],
-      "stateMutability": "view", "type": "function"
-    },
-    {
-      "inputs": [], "name": "LANDS_DEEDS_REGISTRY",
-      "outputs": [ { "internalType": "address", "name": "", "type": "address" } ],
-      "stateMutability": "view", "type": "function"
-    },
-    {
-      "inputs": [], "name": "TREASURY",
-      "outputs": [ { "internalType": "address", "name": "", "type": "address" } ],
-      "stateMutability": "view", "type": "function"
-    },
-    {
-      "inputs": [ { "internalType": "uint256", "name": "_registrationId", "type": "uint256" } ],
-      "name": "approveRegistration", "outputs": [], "stateMutability": "nonpayable", "type": "function"
-    },
-    {
-      "inputs": [ { "internalType": "address", "name": "_userAddress", "type": "address" } ],
-      "name": "approveVerification", "outputs": [], "stateMutability": "nonpayable", "type": "function"
-    },
-    {
-      "inputs": [], "name": "getPendingVerificationAddresses",
-      "outputs": [ { "internalType": "address[]", "name": "", "type": "address[]" } ],
-      "stateMutability": "view", "type": "function"
-    },
-    {
-      "inputs": [
-        { "internalType": "string", "name": "_location", "type": "string" },
-        { "internalType": "string", "name": "_ipfsHash", "type": "string" }
-      ],
-      "name": "initiateRegistration", "outputs": [], "stateMutability": "nonpayable", "type": "function"
-    },
-    {
-      "inputs": [ { "internalType": "address", "name": "_address", "type": "address" } ],
-      "name": "isAuthority",
-      "outputs": [ { "internalType": "bool", "name": "", "type": "bool" } ],
-      "stateMutability": "pure", "type": "function"
-    },
-    {
-      "inputs": [], "name": "landCounter",
-      "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ],
-      "stateMutability": "view", "type": "function"
-    },
-    {
-      "inputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ],
-      "name": "lands",
-      "outputs": [
-        { "internalType": "uint256", "name": "id", "type": "uint256" },
-        { "internalType": "address", "name": "owner", "type": "address" },
-        { "internalType": "string", "name": "location", "type": "string" },
-        { "internalType": "string", "name": "ipfsHash", "type": "string" },
-        { "internalType": "uint256", "name": "timestamp", "type": "uint256" }
-      ],
-      "stateMutability": "view", "type": "function"
-    },
-    {
-      "inputs": [ { "internalType": "string", "name": "", "type": "string" } ],
-      "name": "locationExists",
-      "outputs": [ { "internalType": "bool", "name": "", "type": "bool" } ],
-      "stateMutability": "view", "type": "function"
-    },
-    {
-      "inputs": [], "name": "registrationCounter",
-      "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ],
-      "stateMutability": "view", "type": "function"
-    },
-    {
-      "inputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ],
-      "name": "registrations",
-      "outputs": [
-        { "internalType": "uint256", "name": "id", "type": "uint256" },
-        { "internalType": "address", "name": "prospectiveOwner", "type": "address" },
-        { "internalType": "string", "name": "location", "type": "string" },
-        { "internalType": "string", "name": "ipfsHash", "type": "string" },
-        { "internalType": "bool", "name": "executed", "type": "bool" },
-        { "internalType": "bool", "name": "isRejected", "type": "bool" },
-        { "internalType": "uint256", "name": "rejectionTimestamp", "type": "uint256" }
-      ],
-      "stateMutability": "view", "type": "function"
-    },
-    {
-      "inputs": [ { "internalType": "uint256", "name": "_registrationId", "type": "uint256" } ],
-      "name": "rejectRegistration", "outputs": [], "stateMutability": "nonpayable", "type": "function"
-    },
-    {
-      "inputs": [ { "internalType": "address", "name": "userAddress", "type": "address" } ],
-      "name": "rejectVerification", "outputs": [], "stateMutability": "nonpayable", "type": "function"
-    },
-    {
-      "inputs": [ { "internalType": "string", "name": "_documentIpfsHash", "type": "string" } ],
-      "name": "submitVerification", "outputs": [], "stateMutability": "nonpayable", "type": "function"
-    },
-    {
-      "inputs": [ { "internalType": "address", "name": "", "type": "address" } ],
-      "name": "verifications",
-      "outputs": [
-        { "internalType": "string", "name": "documentIpfsHash", "type": "string" },
-        { "internalType": "enum LandRegistry.UserStatus", "name": "status", "type": "uint8" }
-      ],
-      "stateMutability": "view", "type": "function"
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+
+  <script>
+    // --- CONFIGURATION ---
+    const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+    const backendUrl = "http://127.0.0.1:5000";
+    const contractABI = [
+      { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "uint256", "name": "id", "type": "uint256" }, { "indexed": false, "internalType": "address", "name": "owner", "type": "address" }, { "indexed": false, "internalType": "string", "name": "location", "type": "string" }, { "indexed": false, "internalType": "string", "name": "ipfsHash", "type": "string" }, { "indexed": false, "internalType": "uint256", "name": "timestamp", "type": "uint256" }], "name": "LandRegistered", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "uint256", "name": "registrationId", "type": "uint256" }, { "indexed": false, "internalType": "address", "name": "approver", "type": "address" }], "name": "RegistrationApproved", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "uint256", "name": "registrationId", "type": "uint256" }, { "indexed": false, "internalType": "address", "name": "prospectiveOwner", "type": "address" }, { "indexed": false, "internalType": "string", "name": "location", "type": "string" }, { "indexed": false, "internalType": "string", "name": "ipfsHash", "type": "string" }], "name": "RegistrationInitiated", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "uint256", "name": "registrationId", "type": "uint256" }, { "indexed": false, "internalType": "address", "name": "approver", "type": "address" }], "name": "RegistrationRejected", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "user", "type": "address" }], "name": "UserVerified", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "user", "type": "address" }, { "indexed": true, "internalType": "address", "name": "approver", "type": "address" }], "name": "VerificationApproved", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "user", "type": "address" }, { "indexed": true, "internalType": "address", "name": "approver", "type": "address" }], "name": "VerificationRejected", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "user", "type": "address" }, { "indexed": false, "internalType": "string", "name": "documentIpfsHash", "type": "string" }], "name": "VerificationSubmitted", "type": "event" }, { "inputs": [], "name": "COMMISSIONER_OF_LAND", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "KITWE_CITY_COUNCIL", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "LANDS_DEEDS_REGISTRY", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "TREASURY", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "_registrationId", "type": "uint256" }], "name": "approveRegistration", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "_userAddress", "type": "address" }], "name": "approveVerification", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "getPendingVerificationAddresses", "outputs": [{ "internalType": "address[]", "name": "", "type": "address[]" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "string", "name": "_location", "type": "string" }, { "internalType": "string", "name": "_ipfsHash", "type": "string" }], "name": "initiateRegistration", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "_address", "type": "address" }], "name": "isAuthority", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "stateMutability": "pure", "type": "function" }, { "inputs": [], "name": "landCounter", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "name": "lands", "outputs": [{ "internalType": "uint256", "name": "id", "type": "uint256" }, { "internalType": "address", "name": "owner", "type": "address" }, { "internalType": "string", "name": "location", "type": "string" }, { "internalType": "string", "name": "ipfsHash", "type": "string" }, { "internalType": "uint256", "name": "timestamp", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "string", "name": "", "type": "string" }], "name": "locationExists", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "registrationCounter", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "name": "registrations", "outputs": [{ "internalType": "uint256", "name": "id", "type": "uint256" }, { "internalType": "address", "name": "prospectiveOwner", "type": "address" }, { "internalType": "string", "name": "location", "type": "string" }, { "internalType": "string", "name": "ipfsHash", "type": "string" }, { "internalType": "bool", "name": "executed", "type": "bool" }, { "internalType": "bool", "name": "isRejected", "type": "bool" }, { "internalType": "uint256", "name": "rejectionTimestamp", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "_registrationId", "type": "uint256" }], "name": "rejectRegistration", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "userAddress", "type": "address" }], "name": "rejectVerification", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "string", "name": "_documentIpfsHash", "type": "string" }], "name": "submitVerification", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }], "name": "verifications", "outputs": [{ "internalType": "string", "name": "documentIpfsHash", "type": "string" }, { "internalType": "enum LandRegistry.UserStatus", "name": "status", "type": "uint8" }], "stateMutability": "view", "type": "function" }
+    ];
+    const AUTHORITIES = {
+      KITWE_CITY_COUNCIL: "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+      COMMISSIONER_OF_LAND: "0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65",
+      LANDS_DEEDS_REGISTRY: "0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc",
+      TREASURY: "0x976EA74026E726554dB657fA54763abd0C3a0aa9"
+    };
+
+    // --- APP STATE ---
+    let provider, signer, contract, currentAccount, userVerificationStatus;
+
+    // --- INITIALIZATION ---
+    async function connectAndInit() {
+      if (!window.ethereum) return showNotification('Please install MetaMask.', 'error');
+      try {
+        provider = new ethers.providers.Web3Provider(window.ethereum);
+        const accounts = await provider.send("eth_requestAccounts", []);
+        window.ethereum.on('accountsChanged', handleAccountChange);
+        window.ethereum.on('chainChanged', () => window.location.reload());
+        handleAccountChange(accounts);
+      } catch (error) {
+        showNotification(`Connection failed: ${error.message}`, 'error');
+      }
     }
-];
-        const AUTHORITIES = {
-            KITWE_CITY_COUNCIL: "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
-            COMMISSIONER_OF_LAND: "0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65",
-            LANDS_DEEDS_REGISTRY: "0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc",
-            TREASURY: "0x976EA74026E726554dB657fA54763abd0C3a0aa9"
-        };
 
-        // --- APP STATE ---
-        let provider, signer, contract, currentAccount, userVerificationStatus;
-        
-        // --- INITIALIZATION ---
-        async function connectAndInit() {
-            if (!window.ethereum) return showNotification('Please install MetaMask.', 'error');
-            try {
-                provider = new ethers.providers.Web3Provider(window.ethereum);
-                const accounts = await provider.send("eth_requestAccounts", []);
-                
-                window.ethereum.on('accountsChanged', handleAccountChange);
-                window.ethereum.on('chainChanged', () => window.location.reload());
-                
-                handleAccountChange(accounts);
-            } catch (error) {
-                showNotification(`Connection failed: ${error.message}`, 'error');
-            }
+    async function handleAccountChange(accounts) {
+      if (accounts.length === 0) { currentAccount = null; return setConnected(null); }
+      currentAccount = accounts[0];
+      signer = provider.getSigner(currentAccount);
+      contract = new ethers.Contract(contractAddress, contractABI, signer);
+      setConnected(currentAccount);
+      await startApp();
+    }
+
+    async function startApp() {
+      if (!currentAccount) return;
+      document.getElementById("userVerificationsContainer").innerHTML = '';
+      document.getElementById("landsList").innerHTML = '';
+      await checkUserVerification();
+    }
+
+    // --- UI & EVENT LISTENERS ---
+    function setupEventListeners() {
+      document.getElementById("showRegisterFormBtn").addEventListener('click', () => showSection('landFormContainer'));
+      document.getElementById("showAllLandsBtn").addEventListener('click', async () => { showSection('landsContainer'); await displayAllLands(); });
+      document.getElementById("showAdminPanelBtn").addEventListener('click', async () => { showSection('adminPanelContainer'); await loadAdminData(); });
+      document.getElementById("landForm").addEventListener('submit', handleRegistrationSubmit);
+      document.getElementById("refreshStatusBtn").addEventListener('click', checkUserVerification);
+    }
+
+    function setConnected(address) {
+      const connectMsg = document.getElementById("connectMessage");
+      const dashboard = document.getElementById("dashboard");
+      if (address) {
+        document.getElementById("userAddress").innerHTML = `<i class="fas fa-user-circle"></i> ${shortAddress(address)}`;
+        connectMsg.style.display = 'none';
+        dashboard.style.display = 'block';
+        document.getElementById('showAdminPanelBtn').style.display = isAuthority() ? 'inline-block' : 'none';
+        setupEventListeners();
+      } else {
+        connectMsg.style.display = 'flex';
+        dashboard.style.display = 'none';
+      }
+    }
+
+    function showSection(sectionId) {
+      ['landFormContainer', 'landsContainer', 'historyContainer', 'adminPanelContainer', 'verificationContainer'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = (id === sectionId) ? 'block' : 'none';
+      });
+    }
+
+    // --- CORE LOGIC ---
+    async function checkUserVerification() {
+      if (!contract) return;
+      showNotification("Checking verification status...", "info");
+      try {
+        const verification = await contract.verifications(currentAccount);
+        userVerificationStatus = verification.status;
+        updateUIAfterVerificationCheck();
+      } catch (error) {
+        showNotification("Could not check verification status.", "error");
+      }
+    }
+
+    function updateUIAfterVerificationCheck() {
+      const verificationContainer = document.getElementById('verificationContainer');
+      const navButtons = document.querySelectorAll('.nav-btn');
+      const statusEl = document.getElementById('verificationStatus');
+      const statusMap = ['<i class="fas fa-times-circle"></i> Not Verified', '<i class="fas fa-hourglass-half"></i> Pending', '<i class="fas fa-check-circle"></i> Verified', '<i class="fas fa-exclamation-triangle"></i> Rejected'];
+      statusEl.innerHTML = statusMap[userVerificationStatus] || 'Unknown';
+      const isVerified = userVerificationStatus === 2;
+      const isAuth = isAuthority();
+      navButtons.forEach(btn => btn.disabled = !isVerified && !isAuth);
+      if (isVerified || isAuth) {
+        verificationContainer.style.display = 'none';
+        if (isAuth) {
+          showSection('adminPanelContainer');
+          loadAdminData();
+        } else {
+          showSection('landFormContainer');
         }
-
-        async function handleAccountChange(accounts) {
-            if (accounts.length === 0) { currentAccount = null; return setConnected(null); }
-            currentAccount = accounts[0];
-            signer = provider.getSigner(currentAccount);
-            contract = new ethers.Contract(contractAddress, contractABI, signer);
-            setConnected(currentAccount);
-            await startApp();
+      } else {
+        showSection('verificationContainer');
+        let formHTML = `<h2><i class="fas fa-id-card"></i> Identity Verification Required</h2><p>To register or view land deeds, you must first submit your NRC documents for approval.</p><form id="verificationForm" class="app-form"><div class="form-group"><label for="nrcFrontFile">Upload NRC Front Image</label><input type="file" id="nrcFrontFile" accept="image/*" required></div><div class="form-group"><label for="nrcBackFile">Upload NRC Back Image</label><input type="file" id="nrcBackFile" accept="image/*" required></div><button type="submit" class="submit-btn">Submit for Verification</button></form>`;
+        if (userVerificationStatus === 1) { formHTML = `<div class="info-message">Your identity verification is pending approval.</div>`; }
+        if (userVerificationStatus === 3) { formHTML = `<div class="error-message">Your previous verification was rejected. Please resubmit.</div>` + formHTML; }
+        verificationContainer.innerHTML = formHTML;
+        if (document.getElementById('verificationForm')) {
+          document.getElementById('verificationForm').addEventListener('submit', handleVerificationSubmit);
         }
+      }
+    }
 
-        async function startApp() {
-            if (!currentAccount) return;
-            // Clear old data to prevent stale information
-            document.getElementById("userVerificationsContainer").innerHTML = '';
-            document.getElementById("landsList").innerHTML = '';
-            await checkUserVerification();
+    async function loadAdminData() {
+      await displayPendingVerifications();
+    }
+
+    // --- FORM HANDLERS ---
+    async function handleRegistrationSubmit(e) {
+      e.preventDefault();
+      showNotification("Verifying on-chain status before submission...", "info");
+      try {
+        const verification = await contract.verifications(currentAccount);
+        const onChainStatus = verification.status;
+        if (onChainStatus !== 2) {
+          // Force the UI to update to the correct state
+          userVerificationStatus = onChainStatus;
+          updateUIAfterVerificationCheck();
+          throw new Error(`On-chain check failed. Your status is NOT 'Verified'. The UI has been updated to reflect the correct status.`);
         }
-        
-        // --- UI & EVENT LISTENERS ---
-        function setupEventListeners() {
-            document.getElementById("showRegisterFormBtn").addEventListener('click', () => showSection('landFormContainer'));
-            document.getElementById("showAllLandsBtn").addEventListener('click', async () => { showSection('landsContainer'); await displayAllLands(); });
-            document.getElementById("showAdminPanelBtn").addEventListener('click', async () => { showSection('adminPanelContainer'); await loadAdminData(); });
-            document.getElementById("landForm").addEventListener('submit', handleRegistrationSubmit);
+      } catch (checkError) {
+        showNotification(checkError.message, "error");
+        return;
+      }
+
+      const location = document.getElementById("landLocation").value;
+      const fileInput = document.getElementById("landDeedFile");
+      const file = fileInput.files[0];
+      if (!location || !file) return showNotification("Please provide a location and a deed file.", "error");
+
+      const formData = new FormData();
+      formData.append('deedFile', file);
+      showNotification("Processing title deed...", "info");
+
+      try {
+        const response = await fetch(`${backendUrl}/process-deed`, { method: 'POST', body: formData });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || 'Failed to get hash from server.');
+
+        const deedHash = result.deedHash;
+        showNotification(`Deed processed. Submitting to blockchain...`, "info");
+        await performTransaction(
+          () => contract.initiateRegistration(location, deedHash),
+          "Registration initiated successfully. Awaiting approvals.",
+          "Registration failed."
+        );
+        e.target.reset();
+      } catch (error) {
+        showNotification(`Error: ${error.message}`, "error");
+      }
+    }
+
+    // --- All other functions (unchanged) ---
+    async function handleVerificationSubmit(e) {
+      e.preventDefault();
+      const frontInput = document.getElementById("nrcFrontFile");
+      const backInput = document.getElementById("nrcBackFile");
+      if (!frontInput.files[0] || !backInput.files[0]) {
+        return showNotification("Please select both front and back NRC files.", "error");
+      }
+      const formData = new FormData();
+      formData.append('nrcFrontFile', frontInput.files[0]);
+      formData.append('nrcBackFile', backInput.files[0]);
+      showNotification("Processing NRC documents...", "info");
+      try {
+        const response = await fetch(`${backendUrl}/process-nrc`, { method: 'POST', body: formData });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || 'Failed to get IPFS hash from server.');
+        const ipfsHash = result.ipfsHash;
+        showNotification(`NRCs processed. Submitting to blockchain...`, "info");
+        await performTransaction(
+          () => contract.submitVerification(ipfsHash),
+          "Verification submitted successfully! Please wait for approval.",
+          "Verification submission failed."
+        );
+      } catch (error) {
+        showNotification(`Error: ${error.message}`, "error");
+      }
+    }
+    async function performTransaction(transactionPromise, successMessage, errorMessage) {
+      showNotification("Processing transaction... Please confirm in wallet.", "info");
+      try {
+        const tx = await transactionPromise();
+        await tx.wait();
+        showNotification(successMessage, "success");
+        await startApp();
+      } catch (err) {
+        const reason = err.reason || err.data?.message || err.message;
+        showNotification(`${errorMessage}: ${reason.replace('execution reverted: ', '')}`, "error");
+      }
+    }
+    async function displayAllLands() {
+      document.getElementById("landsList").innerHTML = "<div class='no-data'>Land display not yet implemented.</div>";
+    }
+    async function displayPendingVerifications() {
+      const container = document.getElementById("userVerificationsContainer");
+      container.innerHTML = '<div class="loading">Loading...</div>';
+      try {
+        const addresses = await contract.getPendingVerificationAddresses();
+        if (addresses.length === 0) {
+          container.innerHTML = '<div class="no-data">No pending verifications.</div>';
+          return;
         }
-
-        function setConnected(address) {
-            const connectMsg = document.getElementById("connectMessage");
-            const dashboard = document.getElementById("dashboard");
-            if (address) {
-                document.getElementById("userAddress").innerHTML = `<i class="fas fa-user-circle"></i> ${shortAddress(address)}`;
-                connectMsg.style.display = 'none';
-                dashboard.style.display = 'block';
-                document.getElementById('showAdminPanelBtn').style.display = isAuthority() ? 'inline-block' : 'none';
-                setupEventListeners();
-            } else {
-                connectMsg.style.display = 'flex';
-                dashboard.style.display = 'none';
-            }
-        }
-        
-        function showSection(sectionId) {
-            ['landFormContainer', 'landsContainer', 'historyContainer', 'adminPanelContainer', 'verificationContainer'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.style.display = (id === sectionId) ? 'block' : 'none';
-            });
-        }
-        
-        // --- CORE LOGIC ---
-        async function checkUserVerification() {
-            try {
-                const verification = await contract.verifications(currentAccount);
-                userVerificationStatus = verification.status; // 0, 1, 2, 3
-                updateUIAfterVerificationCheck();
-            } catch (error) {
-                showNotification("Could not check verification status.", "error");
-            }
-        }
-        
-        function updateUIAfterVerificationCheck() {
-            const verificationContainer = document.getElementById('verificationContainer');
-            const navButtons = document.querySelectorAll('.nav-btn');
-            const statusEl = document.getElementById('verificationStatus');
-            
-            const statusMap = [
-                '<i class="fas fa-times-circle"></i> Not Verified', 
-                '<i class="fas fa-hourglass-half"></i> Pending', 
-                '<i class="fas fa-check-circle"></i> Verified', 
-                '<i class="fas fa-exclamation-triangle"></i> Rejected'
-            ];
-            statusEl.innerHTML = statusMap[userVerificationStatus] || 'Unknown';
-
-            const isVerified = userVerificationStatus === 2;
-            const isAuth = isAuthority();
-            
-            navButtons.forEach(btn => btn.disabled = !isVerified && !isAuth);
-
-            if (isVerified || isAuth) {
-                verificationContainer.style.display = 'none';
-                if(isAuth) {
-                    showSection('adminPanelContainer');
-                    loadAdminData();
-                } else {
-                    showSection('landFormContainer');
-                }
-            } else {
-                showSection('verificationContainer');
-                let formHTML = `
-                    <h2><i class="fas fa-id-card"></i> Identity Verification Required</h2>
-                    <p>To register or view land deeds, you must first submit your NRC documents for approval.</p>
-                    <form id="verificationForm" class="app-form">
-                        <div class="form-group">
-                            <label for="nrcFrontFile">Upload NRC Front Image</label>
-                            <input type="file" id="nrcFrontFile" accept="image/*" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="nrcBackFile">Upload NRC Back Image</label>
-                            <input type="file" id="nrcBackFile" accept="image/*" required>
-                        </div>
-                        <button type="submit" class="submit-btn">Submit for Verification</button>
-                    </form>`;
-                if (userVerificationStatus === 1) { // Pending
-                    formHTML = `<div class="info-message">Your identity verification is pending approval.</div>`;
-                }
-                if (userVerificationStatus === 3) { // Rejected
-                    formHTML = `<div class="error-message">Your previous verification was rejected. Please resubmit.</div>` + formHTML;
-                }
-                verificationContainer.innerHTML = formHTML;
-                
-                if (document.getElementById('verificationForm')) {
-                    document.getElementById('verificationForm').addEventListener('submit', handleVerificationSubmit);
-                }
-            }
-        }
-        
-        async function loadAdminData() {
-            // Fetch all pending data for the admin panel
-            await displayPendingVerifications();
-            // await displayPendingRegistrations(); // Add these back later
-            // await displayPendingTransfers();
-        }
-
-        // --- FORM HANDLERS ---
-        async function handleVerificationSubmit(e) {
-            e.preventDefault();
-            const frontInput = document.getElementById("nrcFrontFile");
-            const backInput = document.getElementById("nrcBackFile");
-
-            if (!frontInput.files[0] || !backInput.files[0]) {
-                return showNotification("Please select both front and back NRC files.", "error");
-            }
-            
-            const formData = new FormData();
-            formData.append('nrcFrontFile', frontInput.files[0]);
-            formData.append('nrcBackFile', backInput.files[0]);
-            
-            showNotification("Processing NRC documents...", "info");
-
-            try {
-                const response = await fetch(`${backendUrl}/process-nrc`, { method: 'POST', body: formData });
-                const result = await response.json();
-
-                if (!response.ok) throw new Error(result.error || 'Failed to get IPFS hash from server.');
-                
-                const ipfsHash = result.ipfsHash;
-                showNotification(`NRCs processed. Submitting to blockchain...`, "info");
-                
-                await performTransaction(
-                    () => contract.submitVerification(ipfsHash),
-                    "Verification submitted successfully! Please wait for approval.",
-                    "Verification submission failed."
-                );
-
-            } catch (error) {
-                showNotification(`Error: ${error.message}`, "error");
-            }
-        }
-
-        async function handleRegistrationSubmit(e) {
-            e.preventDefault();
-            const location = document.getElementById("landLocation").value;
-            const fileInput = document.getElementById("landDeedFile");
-            const file = fileInput.files[0];
-
-            if (!location || !file) return showNotification("Please provide a location and a deed file.", "error");
-            
-            const formData = new FormData();
-            formData.append('deedFile', file);
-            
-            showNotification("Processing title deed...", "info");
-            
-            try {
-                const response = await fetch(`${backendUrl}/process-deed`, { method: 'POST', body: formData });
-                const result = await response.json();
-                
-                if (!response.ok) throw new Error(result.error || 'Failed to get hash from server.');
-                
-                const deedHash = result.deedHash;
-                showNotification(`Deed processed. Submitting to blockchain...`, "info");
-
-                await performTransaction(
-                    () => contract.initiateRegistration(location, deedHash),
-                    "Registration initiated successfully. Awaiting approvals.",
-                    "Registration failed."
-                );
-                e.target.reset();
-            } catch (error) {
-                showNotification(`Error: ${error.message}`, "error");
-            }
-        }
-
-        async function performTransaction(transactionPromise, successMessage, errorMessage) {
-            showNotification("Processing transaction... Please confirm in wallet.", "info");
-            try {
-                const tx = await transactionPromise();
-                await tx.wait();
-                showNotification(successMessage, "success");
-                await startApp(); // Reload all data to reflect changes
-            } catch (err) {
-                const reason = err.reason || err.data?.message || err.message;
-                showNotification(`${errorMessage}: ${reason.replace('execution reverted: ', '')}`, "error");
-            }
-        }
-
-        // --- DISPLAY FUNCTIONS ---
-        async function displayAllLands() {
-            // Placeholder: Implement logic to fetch and display lands
-            document.getElementById("landsList").innerHTML = "<div class='no-data'>Land display not yet implemented.</div>";
-        }
-
-        async function displayPendingVerifications() {
-            const container = document.getElementById("userVerificationsContainer");
-            container.innerHTML = '<div class="loading">Loading...</div>';
-            try {
-                const addresses = await contract.getPendingVerificationAddresses();
-                if (addresses.length === 0) {
-                    container.innerHTML = '<div class="no-data">No pending verifications.</div>';
-                    return;
-                }
-                let html = '';
-                for (const address of addresses) {
-                    const verification = await contract.verifications(address);
-                    if (verification.status === 1) { // PENDING
-                        html += `
+        let html = '';
+        for (const address of addresses) {
+          const verification = await contract.verifications(address);
+          if (verification.status === 1) { // PENDING
+            html += `
                             <div class="transaction-card">
                                 <h4>Verification for: ${shortAddress(address)}</h4>
                                 <p><strong>Document:</strong> <a href="${backendUrl}/view-nrc/${verification.documentIpfsHash}" target="_blank" rel="noopener noreferrer">View Documents</a></p>
@@ -548,35 +543,27 @@
                                     <button class="action-btn reject-btn" onclick="rejectUser('${address}')"><i class="fas fa-times"></i> Reject</button>
                                 </div>
                             </div>`;
-                    }
-                }
-                container.innerHTML = html || '<div class="no-data">No pending verifications.</div>';
-            } catch (error) {
-                container.innerHTML = '<div class="no-data">Error loading data.</div>';
-            }
+          }
         }
-
-        // --- ACTION FUNCTIONS (called from HTML) ---
-        function approveUser(address) { performTransaction(() => contract.approveVerification(address), "User approved.", "Approval failed."); }
-        function rejectUser(address) { performTransaction(() => contract.rejectVerification(address), "User rejected.", "Rejection failed."); }
-
-        // --- UTILITY FUNCTIONS ---
-        function isAuthority() { return Object.values(AUTHORITIES).some(addr => addr.toLowerCase() === currentAccount.toLowerCase()); }
-        function shortAddress(addr) { return addr ? `${addr.slice(0, 6)}...${addr.slice(-4)}` : ''; }
-        function showNotification(message, type = 'info', duration = 5000) {
-            const el = document.getElementById("notification");
-            el.textContent = message;
-            el.className = `notification show ${type}`;
-            setTimeout(() => el.classList.remove('show'), duration);
-        }
-
-        // --- Make functions globally available for onclick handlers ---
-        window.approveUser = approveUser;
-        window.rejectUser = rejectUser;
-
-        // --- Start the App ---
-        window.addEventListener('DOMContentLoaded', connectAndInit);
-    </script>
+        container.innerHTML = html || '<div class="no-data">No pending verifications.</div>';
+      } catch (error) {
+        container.innerHTML = '<div class="no-data">Error loading data.</div>';
+      }
+    }
+    function approveUser(address) { performTransaction(() => contract.approveVerification(address), "User approved.", "Approval failed."); }
+    function rejectUser(address) { performTransaction(() => contract.rejectVerification(address), "User rejected.", "Rejection failed."); }
+    function isAuthority() { return Object.values(AUTHORITIES).some(addr => addr.toLowerCase() === currentAccount.toLowerCase()); }
+    function shortAddress(addr) { return addr ? `${addr.slice(0, 6)}...${addr.slice(-4)}` : ''; }
+    function showNotification(message, type = 'info', duration = 5000) {
+      const el = document.getElementById("notification");
+      el.textContent = message;
+      el.className = `notification show ${type}`;
+      setTimeout(() => el.classList.remove('show'), duration);
+    }
+    window.approveUser = approveUser;
+    window.rejectUser = rejectUser;
+    window.addEventListener('DOMContentLoaded', connectAndInit);
+  </script>
 </body>
-</html>
 
+</html>
