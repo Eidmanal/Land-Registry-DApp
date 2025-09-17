@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="src/styles.css">
     <style>
         :root {
             --primary-color: #4361ee;
@@ -119,542 +118,179 @@
     {
       "anonymous": false,
       "inputs": [
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "id",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "owner",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "string",
-          "name": "location",
-          "type": "string"
-        },
-        {
-          "indexed": false,
-          "internalType": "string",
-          "name": "ipfsHash",
-          "type": "string"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "timestamp",
-          "type": "uint256"
-        }
+        { "indexed": false, "internalType": "uint256", "name": "id", "type": "uint256" },
+        { "indexed": false, "internalType": "address", "name": "owner", "type": "address" },
+        { "indexed": false, "internalType": "string", "name": "location", "type": "string" },
+        { "indexed": false, "internalType": "string", "name": "ipfsHash", "type": "string" },
+        { "indexed": false, "internalType": "uint256", "name": "timestamp", "type": "uint256" }
       ],
-      "name": "LandRegistered",
-      "type": "event"
+      "name": "LandRegistered", "type": "event"
     },
     {
       "anonymous": false,
       "inputs": [
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "registrationId",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "approver",
-          "type": "address"
-        }
+        { "indexed": false, "internalType": "uint256", "name": "registrationId", "type": "uint256" },
+        { "indexed": false, "internalType": "address", "name": "approver", "type": "address" }
       ],
-      "name": "RegistrationApproved",
-      "type": "event"
+      "name": "RegistrationApproved", "type": "event"
     },
     {
       "anonymous": false,
       "inputs": [
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "registrationId",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "prospectiveOwner",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "string",
-          "name": "location",
-          "type": "string"
-        },
-        {
-          "indexed": false,
-          "internalType": "string",
-          "name": "ipfsHash",
-          "type": "string"
-        }
+        { "indexed": false, "internalType": "uint256", "name": "registrationId", "type": "uint256" },
+        { "indexed": false, "internalType": "address", "name": "prospectiveOwner", "type": "address" },
+        { "indexed": false, "internalType": "string", "name": "location", "type": "string" },
+        { "indexed": false, "internalType": "string", "name": "ipfsHash", "type": "string" }
       ],
-      "name": "RegistrationInitiated",
-      "type": "event"
+      "name": "RegistrationInitiated", "type": "event"
     },
     {
       "anonymous": false,
       "inputs": [
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "registrationId",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "approver",
-          "type": "address"
-        }
+        { "indexed": false, "internalType": "uint256", "name": "registrationId", "type": "uint256" },
+        { "indexed": false, "internalType": "address", "name": "approver", "type": "address" }
       ],
-      "name": "RegistrationRejected",
-      "type": "event"
+      "name": "RegistrationRejected", "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [ { "indexed": true, "internalType": "address", "name": "user", "type": "address" } ],
+      "name": "UserVerified", "type": "event"
     },
     {
       "anonymous": false,
       "inputs": [
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "user",
-          "type": "address"
-        }
+        { "indexed": true, "internalType": "address", "name": "user", "type": "address" },
+        { "indexed": true, "internalType": "address", "name": "approver", "type": "address" }
       ],
-      "name": "UserVerified",
-      "type": "event"
+      "name": "VerificationApproved", "type": "event"
     },
     {
       "anonymous": false,
       "inputs": [
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "user",
-          "type": "address"
-        },
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "approver",
-          "type": "address"
-        }
+        { "indexed": true, "internalType": "address", "name": "user", "type": "address" },
+        { "indexed": true, "internalType": "address", "name": "approver", "type": "address" }
       ],
-      "name": "VerificationApproved",
-      "type": "event"
+      "name": "VerificationRejected", "type": "event"
     },
     {
       "anonymous": false,
       "inputs": [
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "user",
-          "type": "address"
-        },
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "approver",
-          "type": "address"
-        }
+        { "indexed": true, "internalType": "address", "name": "user", "type": "address" },
+        { "indexed": false, "internalType": "string", "name": "documentIpfsHash", "type": "string" }
       ],
-      "name": "VerificationRejected",
-      "type": "event"
+      "name": "VerificationSubmitted", "type": "event"
     },
     {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "user",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "string",
-          "name": "documentIpfsHash",
-          "type": "string"
-        }
-      ],
-      "name": "VerificationSubmitted",
-      "type": "event"
+      "inputs": [], "name": "COMMISSIONER_OF_LAND",
+      "outputs": [ { "internalType": "address", "name": "", "type": "address" } ],
+      "stateMutability": "view", "type": "function"
     },
     {
-      "inputs": [],
-      "name": "COMMISSIONER_OF_LAND",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
+      "inputs": [], "name": "KITWE_CITY_COUNCIL",
+      "outputs": [ { "internalType": "address", "name": "", "type": "address" } ],
+      "stateMutability": "view", "type": "function"
     },
     {
-      "inputs": [],
-      "name": "KITWE_CITY_COUNCIL",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
+      "inputs": [], "name": "LANDS_DEEDS_REGISTRY",
+      "outputs": [ { "internalType": "address", "name": "", "type": "address" } ],
+      "stateMutability": "view", "type": "function"
     },
     {
-      "inputs": [],
-      "name": "LANDS_DEEDS_REGISTRY",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
+      "inputs": [], "name": "TREASURY",
+      "outputs": [ { "internalType": "address", "name": "", "type": "address" } ],
+      "stateMutability": "view", "type": "function"
     },
     {
-      "inputs": [],
-      "name": "TREASURY",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
+      "inputs": [ { "internalType": "uint256", "name": "_registrationId", "type": "uint256" } ],
+      "name": "approveRegistration", "outputs": [], "stateMutability": "nonpayable", "type": "function"
+    },
+    {
+      "inputs": [ { "internalType": "address", "name": "_userAddress", "type": "address" } ],
+      "name": "approveVerification", "outputs": [], "stateMutability": "nonpayable", "type": "function"
+    },
+    {
+      "inputs": [], "name": "getPendingVerificationAddresses",
+      "outputs": [ { "internalType": "address[]", "name": "", "type": "address[]" } ],
+      "stateMutability": "view", "type": "function"
     },
     {
       "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "_registrationId",
-          "type": "uint256"
-        }
+        { "internalType": "string", "name": "_location", "type": "string" },
+        { "internalType": "string", "name": "_ipfsHash", "type": "string" }
       ],
-      "name": "approveRegistration",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
+      "name": "initiateRegistration", "outputs": [], "stateMutability": "nonpayable", "type": "function"
     },
     {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_userAddress",
-          "type": "address"
-        }
-      ],
-      "name": "approveVerification",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "getPendingVerificationAddresses",
-      "outputs": [
-        {
-          "internalType": "address[]",
-          "name": "",
-          "type": "address[]"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "string",
-          "name": "_location",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "_ipfsHash",
-          "type": "string"
-        }
-      ],
-      "name": "initiateRegistration",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
-        }
-      ],
-      "name": "ipfsHashExists",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_address",
-          "type": "address"
-        }
-      ],
+      "inputs": [ { "internalType": "address", "name": "_address", "type": "address" } ],
       "name": "isAuthority",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "pure",
-      "type": "function"
+      "outputs": [ { "internalType": "bool", "name": "", "type": "bool" } ],
+      "stateMutability": "pure", "type": "function"
     },
     {
-      "inputs": [],
-      "name": "landCounter",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
+      "inputs": [], "name": "landCounter",
+      "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ],
+      "stateMutability": "view", "type": "function"
     },
     {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
+      "inputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ],
       "name": "lands",
       "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "id",
-          "type": "uint256"
-        },
-        {
-          "internalType": "address",
-          "name": "owner",
-          "type": "address"
-        },
-        {
-          "internalType": "string",
-          "name": "location",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "ipfsHash",
-          "type": "string"
-        },
-        {
-          "internalType": "uint256",
-          "name": "timestamp",
-          "type": "uint256"
-        }
+        { "internalType": "uint256", "name": "id", "type": "uint256" },
+        { "internalType": "address", "name": "owner", "type": "address" },
+        { "internalType": "string", "name": "location", "type": "string" },
+        { "internalType": "string", "name": "ipfsHash", "type": "string" },
+        { "internalType": "uint256", "name": "timestamp", "type": "uint256" }
       ],
-      "stateMutability": "view",
-      "type": "function"
+      "stateMutability": "view", "type": "function"
     },
     {
-      "inputs": [
-        {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
-        }
-      ],
+      "inputs": [ { "internalType": "string", "name": "", "type": "string" } ],
       "name": "locationExists",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
+      "outputs": [ { "internalType": "bool", "name": "", "type": "bool" } ],
+      "stateMutability": "view", "type": "function"
     },
     {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "name": "pendingVerificationAddresses",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
+      "inputs": [], "name": "registrationCounter",
+      "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ],
+      "stateMutability": "view", "type": "function"
     },
     {
-      "inputs": [],
-      "name": "registrationCounter",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
+      "inputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ],
       "name": "registrations",
       "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "id",
-          "type": "uint256"
-        },
-        {
-          "internalType": "address",
-          "name": "prospectiveOwner",
-          "type": "address"
-        },
-        {
-          "internalType": "string",
-          "name": "location",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "ipfsHash",
-          "type": "string"
-        },
-        {
-          "internalType": "bool",
-          "name": "executed",
-          "type": "bool"
-        },
-        {
-          "internalType": "bool",
-          "name": "isRejected",
-          "type": "bool"
-        },
-        {
-          "internalType": "uint256",
-          "name": "rejectionTimestamp",
-          "type": "uint256"
-        }
+        { "internalType": "uint256", "name": "id", "type": "uint256" },
+        { "internalType": "address", "name": "prospectiveOwner", "type": "address" },
+        { "internalType": "string", "name": "location", "type": "string" },
+        { "internalType": "string", "name": "ipfsHash", "type": "string" },
+        { "internalType": "bool", "name": "executed", "type": "bool" },
+        { "internalType": "bool", "name": "isRejected", "type": "bool" },
+        { "internalType": "uint256", "name": "rejectionTimestamp", "type": "uint256" }
       ],
-      "stateMutability": "view",
-      "type": "function"
+      "stateMutability": "view", "type": "function"
     },
     {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "_registrationId",
-          "type": "uint256"
-        }
-      ],
-      "name": "rejectRegistration",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
+      "inputs": [ { "internalType": "uint256", "name": "_registrationId", "type": "uint256" } ],
+      "name": "rejectRegistration", "outputs": [], "stateMutability": "nonpayable", "type": "function"
     },
     {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "userAddress",
-          "type": "address"
-        }
-      ],
-      "name": "rejectVerification",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
+      "inputs": [ { "internalType": "address", "name": "userAddress", "type": "address" } ],
+      "name": "rejectVerification", "outputs": [], "stateMutability": "nonpayable", "type": "function"
     },
     {
-      "inputs": [
-        {
-          "internalType": "string",
-          "name": "_documentIpfsHash",
-          "type": "string"
-        }
-      ],
-      "name": "submitVerification",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
+      "inputs": [ { "internalType": "string", "name": "_documentIpfsHash", "type": "string" } ],
+      "name": "submitVerification", "outputs": [], "stateMutability": "nonpayable", "type": "function"
     },
     {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
+      "inputs": [ { "internalType": "address", "name": "", "type": "address" } ],
       "name": "verifications",
       "outputs": [
-        {
-          "internalType": "string",
-          "name": "documentIpfsHash",
-          "type": "string"
-        },
-        {
-          "internalType": "enum LandRegistry.UserStatus",
-          "name": "status",
-          "type": "uint8"
-        }
+        { "internalType": "string", "name": "documentIpfsHash", "type": "string" },
+        { "internalType": "enum LandRegistry.UserStatus", "name": "status", "type": "uint8" }
       ],
-      "stateMutability": "view",
-      "type": "function"
+      "stateMutability": "view", "type": "function"
     }
-  ]; // Ensure this is populated
+];
         const AUTHORITIES = {
             KITWE_CITY_COUNCIL: "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
             COMMISSIONER_OF_LAND: "0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65",
@@ -671,8 +307,10 @@
             try {
                 provider = new ethers.providers.Web3Provider(window.ethereum);
                 const accounts = await provider.send("eth_requestAccounts", []);
+                
                 window.ethereum.on('accountsChanged', handleAccountChange);
                 window.ethereum.on('chainChanged', () => window.location.reload());
+                
                 handleAccountChange(accounts);
             } catch (error) {
                 showNotification(`Connection failed: ${error.message}`, 'error');
@@ -690,6 +328,7 @@
 
         async function startApp() {
             if (!currentAccount) return;
+            // Clear old data to prevent stale information
             document.getElementById("userVerificationsContainer").innerHTML = '';
             document.getElementById("landsList").innerHTML = '';
             await checkUserVerification();
@@ -720,7 +359,8 @@
         
         function showSection(sectionId) {
             ['landFormContainer', 'landsContainer', 'historyContainer', 'adminPanelContainer', 'verificationContainer'].forEach(id => {
-                document.getElementById(id).style.display = (id === sectionId) ? 'block' : 'none';
+                const el = document.getElementById(id);
+                if (el) el.style.display = (id === sectionId) ? 'block' : 'none';
             });
         }
         
@@ -728,7 +368,7 @@
         async function checkUserVerification() {
             try {
                 const verification = await contract.verifications(currentAccount);
-                userVerificationStatus = verification.status;
+                userVerificationStatus = verification.status; // 0, 1, 2, 3
                 updateUIAfterVerificationCheck();
             } catch (error) {
                 showNotification("Could not check verification status.", "error");
@@ -739,40 +379,49 @@
             const verificationContainer = document.getElementById('verificationContainer');
             const navButtons = document.querySelectorAll('.nav-btn');
             const statusEl = document.getElementById('verificationStatus');
-            const statusMap = ['<i class="fas fa-times-circle"></i> Not Verified', '<i class="fas fa-hourglass-half"></i> Pending', '<i class="fas fa-check-circle"></i> Verified', '<i class="fas fa-exclamation-triangle"></i> Rejected'];
+            
+            const statusMap = [
+                '<i class="fas fa-times-circle"></i> Not Verified', 
+                '<i class="fas fa-hourglass-half"></i> Pending', 
+                '<i class="fas fa-check-circle"></i> Verified', 
+                '<i class="fas fa-exclamation-triangle"></i> Rejected'
+            ];
             statusEl.innerHTML = statusMap[userVerificationStatus] || 'Unknown';
 
             const isVerified = userVerificationStatus === 2;
             const isAuth = isAuthority();
+            
             navButtons.forEach(btn => btn.disabled = !isVerified && !isAuth);
 
             if (isVerified || isAuth) {
                 verificationContainer.style.display = 'none';
                 if(isAuth) {
-                   showSection('adminPanelContainer');
-                   loadAdminData();
+                    showSection('adminPanelContainer');
+                    loadAdminData();
                 } else {
-                   showSection('landFormContainer');
+                    showSection('landFormContainer');
                 }
             } else {
                 showSection('verificationContainer');
-                // *** MODIFIED HERE: Form now has two file inputs ***
                 let formHTML = `
                     <h2><i class="fas fa-id-card"></i> Identity Verification Required</h2>
-                    <p>To register land, please upload clear images of the front and back of your NRC.</p>
+                    <p>To register or view land deeds, you must first submit your NRC documents for approval.</p>
                     <form id="verificationForm" class="app-form">
                         <div class="form-group">
-                            <label for="nrcFrontFile">Upload NRC Front</label>
+                            <label for="nrcFrontFile">Upload NRC Front Image</label>
                             <input type="file" id="nrcFrontFile" accept="image/*" required>
                         </div>
                         <div class="form-group">
-                            <label for="nrcBackFile">Upload NRC Back</label>
+                            <label for="nrcBackFile">Upload NRC Back Image</label>
                             <input type="file" id="nrcBackFile" accept="image/*" required>
                         </div>
                         <button type="submit" class="submit-btn">Submit for Verification</button>
                     </form>`;
                 if (userVerificationStatus === 1) { // Pending
-                    formHTML = `<div class="info-message" style="text-align: center; padding: 20px;">Your identity verification is pending approval by the authorities.</div>`;
+                    formHTML = `<div class="info-message">Your identity verification is pending approval.</div>`;
+                }
+                if (userVerificationStatus === 3) { // Rejected
+                    formHTML = `<div class="error-message">Your previous verification was rejected. Please resubmit.</div>` + formHTML;
                 }
                 verificationContainer.innerHTML = formHTML;
                 
@@ -783,13 +432,15 @@
         }
         
         async function loadAdminData() {
+            // Fetch all pending data for the admin panel
             await displayPendingVerifications();
+            // await displayPendingRegistrations(); // Add these back later
+            // await displayPendingTransfers();
         }
 
         // --- FORM HANDLERS ---
         async function handleVerificationSubmit(e) {
             e.preventDefault();
-            // *** MODIFIED HERE: Get both front and back files ***
             const frontInput = document.getElementById("nrcFrontFile");
             const backInput = document.getElementById("nrcBackFile");
 
@@ -827,15 +478,19 @@
             e.preventDefault();
             const location = document.getElementById("landLocation").value;
             const fileInput = document.getElementById("landDeedFile");
-            if (!location || !fileInput.files[0]) return showNotification("Please provide a location and a deed file.", "error");
+            const file = fileInput.files[0];
+
+            if (!location || !file) return showNotification("Please provide a location and a deed file.", "error");
             
             const formData = new FormData();
-            formData.append('deedFile', fileInput.files[0]);
+            formData.append('deedFile', file);
+            
             showNotification("Processing title deed...", "info");
             
             try {
                 const response = await fetch(`${backendUrl}/process-deed`, { method: 'POST', body: formData });
                 const result = await response.json();
+                
                 if (!response.ok) throw new Error(result.error || 'Failed to get hash from server.');
                 
                 const deedHash = result.deedHash;
@@ -858,7 +513,7 @@
                 const tx = await transactionPromise();
                 await tx.wait();
                 showNotification(successMessage, "success");
-                await startApp();
+                await startApp(); // Reload all data to reflect changes
             } catch (err) {
                 const reason = err.reason || err.data?.message || err.message;
                 showNotification(`${errorMessage}: ${reason.replace('execution reverted: ', '')}`, "error");
@@ -867,6 +522,7 @@
 
         // --- DISPLAY FUNCTIONS ---
         async function displayAllLands() {
+            // Placeholder: Implement logic to fetch and display lands
             document.getElementById("landsList").innerHTML = "<div class='no-data'>Land display not yet implemented.</div>";
         }
 
@@ -883,13 +539,11 @@
                 for (const address of addresses) {
                     const verification = await contract.verifications(address);
                     if (verification.status === 1) { // PENDING
-                        // *** MODIFIED HERE: Clarified link text for authorities ***
                         html += `
                             <div class="transaction-card">
                                 <h4>Verification for: ${shortAddress(address)}</h4>
-                                <p><strong>Document Manifest:</strong> <a href="https://ipfs.io/ipfs/${verification.documentIpfsHash}" target="_blank" rel="noopener noreferrer">View on IPFS</a></p>
-                                <small style="display: block; margin-top: -10px; margin-bottom: 10px;">Open this link to find the hashes for front and back images.</small>
-                                <div class="transaction-actions" style="display:flex; gap: 10px;">
+                                <p><strong>Document:</strong> <a href="${backendUrl}/view-nrc/${verification.documentIpfsHash}" target="_blank" rel="noopener noreferrer">View Documents</a></p>
+                                <div class="transaction-actions" style="display:flex; gap: 10px; margin-top: 10px;">
                                     <button class="action-btn approve-btn" onclick="approveUser('${address}')"><i class="fas fa-check"></i> Approve</button>
                                     <button class="action-btn reject-btn" onclick="rejectUser('${address}')"><i class="fas fa-times"></i> Reject</button>
                                 </div>
