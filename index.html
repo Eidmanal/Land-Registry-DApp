@@ -44,6 +44,10 @@
         .submit-btn { width: 100%; padding: 12px; background-color: var(--primary-color); color: var(--white-color); border: none; cursor: pointer; border-radius: var(--border-radius); }
         .lands-list, .approvals-list, .history-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
         .land-card, .transaction-card, .request-card, .history-card { background-color: #fff; padding: 20px; border-radius: var(--border-radius); box-shadow: var(--box-shadow); word-wrap: break-word; }
+        .pending-approvals { margin-top: 15px; }
+        .pending-approvals h5 { margin: 0 0 5px 0; }
+        .pending-approvals ul { margin: 0; padding-left: 20px; list-style: none; }
+        .pending-approvals li { font-size: 0.9rem; color: #6c757d; }
         .action-btn { width: auto; padding: 8px 12px; font-size: 0.9rem; border: none; color: white; border-radius: 5px; cursor: pointer; }
         .approve-btn { background-color: #28a745; }
         .reject-btn { background-color: #dc3545; }
@@ -136,7 +140,6 @@
         let provider, signer, contract, currentAccount, userVerificationStatus;
         
         // --- INITIALIZATION & CORE LOGIC ---
-        // (connectAndInit, handleAccountChange, startApp, checkUserVerification are unchanged)
         async function connectAndInit() {
             if (!window.ethereum) return showNotification('Please install MetaMask.', 'error');
             try {
@@ -145,8 +148,11 @@
                 window.ethereum.on('accountsChanged', handleAccountChange);
                 window.ethereum.on('chainChanged', () => window.location.reload());
                 handleAccountChange(accounts);
-            } catch (error) { showNotification(`Connection failed: ${error.message}`, 'error'); }
+            } catch (error) {
+                showNotification(`Connection failed: ${error.message}`, 'error');
+            }
         }
+
         async function handleAccountChange(accounts) {
             if (accounts.length === 0) { currentAccount = null; return setConnected(null); }
             currentAccount = accounts[0];
@@ -155,12 +161,14 @@
             setConnected(currentAccount);
             await startApp();
         }
+
         async function startApp() {
             if (!currentAccount) return;
             document.getElementById("userVerificationsContainer").innerHTML = '';
             document.getElementById("landsList").innerHTML = '';
             await checkUserVerification();
         }
+        
         async function checkUserVerification() {
             if (!contract) return;
             showNotification("Checking verification status...", "info");
@@ -168,19 +176,21 @@
                 const verification = await contract.verifications(currentAccount);
                 userVerificationStatus = verification.status;
                 updateUIAfterVerificationCheck();
-            } catch (error) { showNotification("Could not check verification status.", "error"); }
+            } catch (error) {
+                showNotification("Could not check verification status.", "error");
+            }
         }
         
         // --- UI & EVENT LISTENERS ---
         function setupEventListeners() {
             document.getElementById("showRegisterFormBtn").addEventListener('click', () => showSection('landFormContainer'));
             document.getElementById("showAllLandsBtn").addEventListener('click', async () => { showSection('landsContainer'); await displayAllLands(); });
-            // NEW: Added listener for history button
             document.getElementById("showHistoryBtn").addEventListener('click', async () => { showSection('historyContainer'); await displayHistory(); });
             document.getElementById("showAdminPanelBtn").addEventListener('click', async () => { showSection('adminPanelContainer'); await loadAdminData(); });
             document.getElementById("landForm").addEventListener('submit', handleRegistrationSubmit);
             document.getElementById("refreshStatusBtn").addEventListener('click', checkUserVerification);
         }
+
         function setConnected(address) {
             const connectMsg = document.getElementById("connectMessage");
             const dashboard = document.getElementById("dashboard");
@@ -195,17 +205,24 @@
                 dashboard.style.display = 'none';
             }
         }
+        
         function showSection(sectionId) {
             ['landFormContainer', 'landsContainer', 'historyContainer', 'adminPanelContainer', 'verificationContainer'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.style.display = (id === sectionId) ? 'block' : 'none';
             });
         }
+        
         function updateUIAfterVerificationCheck() {
             const verificationContainer = document.getElementById('verificationContainer');
             const navButtons = document.querySelectorAll('.nav-btn');
             const statusEl = document.getElementById('verificationStatus');
-            const statusMap = ['<i class="fas fa-times-circle"></i> Not Verified','<i class="fas fa-hourglass-half"></i> Pending','<i class="fas fa-check-circle"></i> Verified','<i class="fas fa-exclamation-triangle"></i> Rejected'];
+            const statusMap = [
+                '<i class="fas fa-times-circle"></i> Not Verified', 
+                '<i class="fas fa-hourglass-half"></i> Pending', 
+                '<i class="fas fa-check-circle"></i> Verified', 
+                '<i class="fas fa-exclamation-triangle"></i> Rejected'
+            ];
             statusEl.innerHTML = statusMap[userVerificationStatus] || 'Unknown';
             const isVerified = userVerificationStatus === 2;
             const isAuth = isAuthority();
@@ -232,156 +249,11 @@
         
         // --- DATA LOADING ---
         async function loadAdminData() {
-            // NEW: Now loads all pending requests
             await displayPendingVerifications();
             await displayPendingRegistrations();
-            // await displayPendingTransfers(); // You can uncomment this when you add the transfer logic
         }
 
-        // --- FORM HANDLERS (No changes) ---
-        async function handleRegistrationSubmit(e) { /* ... unchanged ... */ }
-        async function handleVerificationSubmit(e) { /* ... unchanged ... */ }
-        async function performTransaction(transactionPromise, successMessage, errorMessage) { /* ... unchanged ... */ }
-
-        // --- DISPLAY FUNCTIONS (NEW & UPDATED) ---
-
-        async function displayAllLands() {
-            const container = document.getElementById("landsList");
-            container.innerHTML = '<div class="loading">Loading lands...</div>';
-            try {
-                const count = await contract.landCounter();
-                if (count == 0) {
-                    container.innerHTML = '<div class="no-data">No land has been registered yet.</div>';
-                    return;
-                }
-                let html = '';
-                for (let i = 1; i <= count; i++) {
-                    const land = await contract.lands(i);
-                    // The owner address will be 0x0...0 if the land doesn't exist or was deleted
-                    if (land.owner !== "0x0000000000000000000000000000000000000000") {
-                        html += renderLandCard(land);
-                    }
-                }
-                container.innerHTML = html || '<div class="no-data">No land records found.</div>';
-            } catch (error) {
-                console.error("Error displaying lands:", error);
-                container.innerHTML = '<div class="no-data">Error fetching land data.</div>';
-            }
-        }
-
-        async function displayHistory() {
-            const regContainer = document.getElementById("registrationHistoryContainer");
-            const transContainer = document.getElementById("transferHistoryContainer");
-            regContainer.innerHTML = '<div class="loading">Loading history...</div>';
-            transContainer.innerHTML = ''; // Clear previous
-            try {
-                // Fetch LandRegistered events
-                const regFilter = contract.filters.LandRegistered();
-                const regEvents = await contract.queryFilter(regFilter, 0, 'latest');
-                regContainer.innerHTML = regEvents.length > 0
-                    ? regEvents.reverse().map(e => renderHistoryCard('Land Registered', `ID: ${e.args.id}`, `Owner: ${shortAddress(e.args.owner)}`, e.args.timestamp.toNumber())).join('')
-                    : '<div class="no-data">No registration history.</div>';
-
-                // Fetch LandTransferred events (uncomment when ready)
-                // const transFilter = contract.filters.LandTransferred();
-                // const transEvents = await contract.queryFilter(transFilter, 0, 'latest');
-                // transContainer.innerHTML = transEvents.length > 0 ? ... : '<div class="no-data">No transfer history.</div>';
-            } catch (error) {
-                console.error("Error fetching history:", error);
-                regContainer.innerHTML = '<div class="no-data">Error fetching history.</div>';
-            }
-        }
-
-        async function displayPendingVerifications() { /* ... unchanged ... */ }
-
-        async function displayPendingRegistrations() {
-            const container = document.getElementById("registrationRequestsContainer");
-            container.innerHTML = '<div class="loading">Loading...</div>';
-            try {
-                const count = await contract.registrationCounter();
-                if (count == 0) {
-                     container.innerHTML = '<div class="no-data">No pending registration requests.</div>';
-                     return;
-                }
-                let html = '';
-                let pendingCount = 0;
-                for (let i = 1; i <= count; i++) {
-                    const reg = await contract.registrations(i);
-                    // Only display if it has not been executed yet
-                    if (!reg.executed) {
-                        html += renderRegistrationRequest(reg, i);
-                        pendingCount++;
-                    }
-                }
-                container.innerHTML = pendingCount > 0 ? html : '<div class="no-data">No pending registration requests.</div>';
-            } catch (error) {
-                console.error("Error fetching pending registrations:", error);
-                container.innerHTML = '<div class="no-data">Error loading data.</div>';
-            }
-        }
-
-        // --- HTML CARD RENDERING FUNCTIONS (NEW & UPDATED) ---
-
-        function renderLandCard(land) {
-            const isOwner = land.owner.toLowerCase() === currentAccount.toLowerCase();
-            return `
-                <div class="land-card">
-                    <h3>Land ID: ${land.id}</h3>
-                    <p><strong>Owner:</strong> ${isOwner ? 'You' : shortAddress(land.owner)}</p>
-                    <p><strong>Location:</strong> ${land.location}</p>
-                    <p><strong>Deed Hash:</strong> <a href="https://ipfs.io/ipfs/${land.ipfsHash}" target="_blank">${shortAddress(land.ipfsHash)}</a></p>
-                    <p><strong>Registered:</strong> ${new Date(land.timestamp * 1000).toLocaleString()}</p>
-                    ${isOwner ? `<button class="action-btn" disabled title="Transfer functionality not yet implemented.">Transfer</button>` : ''}
-                </div>`;
-        }
-
-        function renderHistoryCard(title, line1, line2, timestamp) {
-            return `
-                <div class="history-card">
-                    <p><strong>${title}</strong></p>
-                    <p>${line1}</p>
-                    <p>${line2}</p>
-                    ${timestamp ? `<p class="timestamp">${new Date(timestamp * 1000).toLocaleString()}</p>` : ''}
-                </div>`;
-        }
-        
-        function renderRegistrationRequest(reg, id) {
-             return `
-                <div class="transaction-card">
-                    <h4>Registration Request #${id}</h4>
-                    <p><strong>Applicant:</strong> ${shortAddress(reg.prospectiveOwner)}</p>
-                    <p><strong>Location:</strong> ${reg.location}</p>
-                    <p><strong>Deed Hash:</strong> <a href="https://ipfs.io/ipfs/${reg.ipfsHash}" target="_blank">${shortAddress(reg.ipfsHash)}</a></p>
-                    <div class="transaction-actions" style="display:flex; gap: 10px; margin-top: 10px;">
-                        <button class="action-btn approve-btn" onclick="approveRegistration('${id}')"><i class="fas fa-check"></i> Approve</button>
-                        <button class="action-btn reject-btn" onclick="rejectRegistration('${id}')"><i class="fas fa-times"></i> Reject</button>
-                    </div>
-                </div>`;
-        }
-
-        // --- ACTION FUNCTIONS (NEW & UPDATED) ---
-        function approveUser(address) { performTransaction(() => contract.approveVerification(address), "User approved.", "Approval failed."); }
-        function rejectUser(address) { performTransaction(() => contract.rejectVerification(address), "User rejected.", "Rejection failed."); }
-        function approveRegistration(id) { performTransaction(() => contract.approveRegistration(id), "Registration approved.", "Approval failed."); }
-        function rejectRegistration(id) { performTransaction(() => contract.rejectRegistration(id), "Registration rejected.", "Rejection failed."); }
-
-        // --- UTILITY FUNCTIONS & GLOBAL EXPORTS ---
-        function isAuthority() { return Object.values(AUTHORITIES).some(addr => addr.toLowerCase() === currentAccount.toLowerCase()); }
-        function shortAddress(addr) { return addr ? `${addr.slice(0, 6)}...${addr.slice(-4)}` : ''; }
-        function showNotification(message, type = 'info', duration = 5000) {
-            const el = document.getElementById("notification");
-            el.textContent = message;
-            el.className = `notification show ${type}`;
-            setTimeout(() => el.classList.remove('show'), duration);
-        }
-
-        window.approveUser = approveUser;
-        window.rejectUser = rejectUser;
-        window.approveRegistration = approveRegistration;
-        window.rejectRegistration = rejectRegistration;
-        window.addEventListener('DOMContentLoaded', connectAndInit);
-
-        // --- UNCHANGED FUNCTIONS FOR COMPLETENESS ---
+        // --- FORM HANDLERS ---
         async function handleRegistrationSubmit(e) {
             e.preventDefault();
             showNotification("Verifying on-chain status before submission...", "info");
@@ -416,6 +288,7 @@
                 showNotification(`Error: ${error.message}`, "error");
             }
         }
+        
         async function handleVerificationSubmit(e) {
             e.preventDefault();
             const frontInput = document.getElementById("nrcFrontFile");
@@ -438,6 +311,7 @@
                 showNotification(`Error: ${error.message}`, "error");
             }
         }
+
         async function performTransaction(transactionPromise, successMessage, errorMessage) {
             showNotification("Processing transaction... Please confirm in wallet.", "info");
             try {
@@ -450,6 +324,48 @@
                 showNotification(`${errorMessage}: ${reason.replace('execution reverted: ', '')}`, "error");
             }
         }
+
+        // --- DISPLAY FUNCTIONS ---
+        async function displayAllLands() {
+            const container = document.getElementById("landsList");
+            container.innerHTML = '<div class="loading">Loading lands...</div>';
+            try {
+                const count = await contract.landCounter();
+                if (count == 0) {
+                    container.innerHTML = '<div class="no-data">No land has been registered yet.</div>';
+                    return;
+                }
+                let html = '';
+                for (let i = 1; i <= count; i++) {
+                    const land = await contract.lands(i);
+                    if (land.owner !== "0x0000000000000000000000000000000000000000") {
+                        html += renderLandCard(land);
+                    }
+                }
+                container.innerHTML = html || '<div class="no-data">No land records found.</div>';
+            } catch (error) {
+                console.error("Error displaying lands:", error);
+                container.innerHTML = '<div class="no-data">Error fetching land data.</div>';
+            }
+        }
+
+        async function displayHistory() {
+            const regContainer = document.getElementById("registrationHistoryContainer");
+            const transContainer = document.getElementById("transferHistoryContainer");
+            regContainer.innerHTML = '<div class="loading">Loading history...</div>';
+            transContainer.innerHTML = '';
+            try {
+                const regFilter = contract.filters.LandRegistered();
+                const regEvents = await contract.queryFilter(regFilter, 0, 'latest');
+                regContainer.innerHTML = regEvents.length > 0
+                    ? regEvents.reverse().map(e => renderHistoryCard('Land Registered', `ID: ${e.args.id}`, `Owner: ${shortAddress(e.args.owner)}`, e.args.timestamp.toNumber())).join('')
+                    : '<div class="no-data">No registration history.</div>';
+            } catch (error) {
+                console.error("Error fetching history:", error);
+                regContainer.innerHTML = '<div class="no-data">Error fetching history.</div>';
+            }
+        }
+
         async function displayPendingVerifications() {
             const container = document.getElementById("userVerificationsContainer");
             container.innerHTML = '<div class="loading">Loading...</div>';
@@ -462,16 +378,119 @@
                 let html = '';
                 for (const address of addresses) {
                     const verification = await contract.verifications(address);
-                    if (verification.status === 1) { // PENDING
-                        html += `<div class="transaction-card"><h4>Verification for: ${shortAddress(address)}</h4><p><strong>Document:</strong> <a href="${backendUrl}/view-nrc/${verification.documentIpfsHash}" target="_blank" rel="noopener noreferrer">View Documents</a></p><div class="transaction-actions" style="display:flex; gap: 10px; margin-top: 10px;"><button class="action-btn approve-btn" onclick="approveUser('${address}')"><i class="fas fa-check"></i> Approve</button><button class="action-btn reject-btn" onclick="rejectUser('${address}')"><i class="fas fa-times"></i> Reject</button></div></div>`;
+                    if (verification.status === 1) { 
+                        const approvals = await contract.getVerificationApprovals(address);
+                        const pendingApprovers = getPendingApprovals(approvals);
+                        html += `
+                            <div class="transaction-card">
+                                <h4>Verification for: ${shortAddress(address)}</h4>
+                                <p><strong>Document:</strong> <a href="${backendUrl}/view-nrc/${verification.documentIpfsHash}" target="_blank" rel="noopener noreferrer">View Documents</a></p>
+                                <div class="pending-approvals">
+                                    <h5>Awaiting Approval From:</h5>
+                                    <ul>${pendingApprovers.map(name => `<li><i class="fas fa-gavel"></i> ${name}</li>`).join('')}</ul>
+                                </div>
+                                <div class="transaction-actions" style="display:flex; gap: 10px; margin-top: 10px;">
+                                    <button class="action-btn approve-btn" onclick="approveUser('${address}')"><i class="fas fa-check"></i> Approve</button>
+                                    <button class="action-btn reject-btn" onclick="rejectUser('${address}')"><i class="fas fa-times"></i> Reject</button>
+                                </div>
+                            </div>`;
                     }
                 }
                 container.innerHTML = html || '<div class="no-data">No pending verifications.</div>';
             } catch (error) {
+                console.error("Error fetching pending verifications:", error);
                 container.innerHTML = '<div class="no-data">Error loading data.</div>';
             }
         }
+
+        async function displayPendingRegistrations() {
+            const container = document.getElementById("registrationRequestsContainer");
+            container.innerHTML = '<div class="loading">Loading...</div>';
+            try {
+                const count = await contract.registrationCounter();
+                if (count == 0) {
+                     container.innerHTML = '<div class="no-data">No pending registration requests.</div>';
+                     return;
+                }
+                let html = '';
+                let pendingCount = 0;
+                for (let i = 1; i <= count; i++) {
+                    const reg = await contract.registrations(i);
+                    if (!reg.executed) {
+                        const approvals = await contract.getRegistrationApprovals(i);
+                        html += renderRegistrationRequest(reg, i, approvals);
+                        pendingCount++;
+                    }
+                }
+                container.innerHTML = pendingCount > 0 ? html : '<div class="no-data">No pending registration requests.</div>';
+            } catch (error) {
+                console.error("Error fetching pending registrations:", error);
+                container.innerHTML = '<div class="no-data">Error loading data.</div>';
+            }
+        }
+
+        // --- HTML CARD RENDERING ---
+        function renderLandCard(land) {
+            const isOwner = land.owner.toLowerCase() === currentAccount.toLowerCase();
+            return `<div class="land-card"><h3>Land ID: ${land.id}</h3><p><strong>Owner:</strong> ${isOwner ? 'You' : shortAddress(land.owner)}</p><p><strong>Location:</strong> ${land.location}</p><p><strong>Deed Hash:</strong> <a href="https://ipfs.io/ipfs/${land.ipfsHash}" target="_blank">${shortAddress(land.ipfsHash)}</a></p><p><strong>Registered:</strong> ${new Date(land.timestamp * 1000).toLocaleString()}</p>${isOwner ? `<button class="action-btn" disabled title="Transfer functionality not yet implemented.">Transfer</button>` : ''}</div>`;
+        }
+
+        function renderHistoryCard(title, line1, line2, timestamp) {
+            return `<div class="history-card"><p><strong>${title}</strong></p><p>${line1}</p><p>${line2}</p>${timestamp ? `<p class="timestamp">${new Date(timestamp * 1000).toLocaleString()}</p>` : ''}</div>`;
+        }
+        
+        function renderRegistrationRequest(reg, id, approvals) {
+            const pendingApprovers = getPendingApprovals(approvals);
+            return `
+                <div class="transaction-card">
+                    <h4>Registration Request #${id}</h4>
+                    <p><strong>Applicant:</strong> ${shortAddress(reg.prospectiveOwner)}</p>
+                    <p><strong>Location:</strong> ${reg.location}</p>
+                    <p><strong>Deed Hash:</strong> <a href="https://ipfs.io/ipfs/${reg.ipfsHash}" target="_blank">${shortAddress(reg.ipfsHash)}</a></p>
+                    <div class="pending-approvals">
+                        <h5>Awaiting Approval From:</h5>
+                        <ul>${pendingApprovers.map(name => `<li><i class="fas fa-gavel"></i> ${name}</li>`).join('')}</ul>
+                    </div>
+                    <div class="transaction-actions" style="display:flex; gap: 10px; margin-top: 10px;">
+                        <button class="action-btn approve-btn" onclick="approveRegistration('${id}')"><i class="fas fa-check"></i> Approve</button>
+                        <button class="action-btn reject-btn" onclick="rejectRegistration('${id}')"><i class="fas fa-times"></i> Reject</button>
+                    </div>
+                </div>`;
+        }
+
+        // --- ACTION FUNCTIONS ---
+        function approveUser(address) { performTransaction(() => contract.approveVerification(address), "User approved.", "Approval failed."); }
+        function rejectUser(address) { performTransaction(() => contract.rejectVerification(address), "User rejected.", "Rejection failed."); }
+        function approveRegistration(id) { performTransaction(() => contract.approveRegistration(id), "Registration approved.", "Approval failed."); }
+        function rejectRegistration(id) { performTransaction(() => contract.rejectRegistration(id), "Registration rejected.", "Rejection failed."); }
+
+        // --- UTILITY FUNCTIONS ---
+        function getPendingApprovals(approvals) {
+            const authorityNames = ["Kitwe City Council", "Commissioner of Land", "Lands & Deeds Registry", "Treasury"];
+            const pending = [];
+            for (let i = 0; i < approvals.length; i++) {
+                if (approvals[i] === 0) { // PENDING
+                    pending.push(authorityNames[i]);
+                }
+            }
+            return pending;
+        }
+        
+        function isAuthority() { return Object.values(AUTHORITIES).some(addr => addr.toLowerCase() === currentAccount.toLowerCase()); }
+        function shortAddress(addr) { return addr ? `${addr.slice(0, 6)}...${addr.slice(-4)}` : ''; }
+        function showNotification(message, type = 'info', duration = 5000) {
+            const el = document.getElementById("notification");
+            el.textContent = message;
+            el.className = `notification show ${type}`;
+            setTimeout(() => el.classList.remove('show'), duration);
+        }
+
+        // --- GLOBAL EXPORTS ---
+        window.approveUser = approveUser;
+        window.rejectUser = rejectUser;
+        window.approveRegistration = approveRegistration;
+        window.rejectRegistration = rejectRegistration;
+        window.addEventListener('DOMContentLoaded', connectAndInit);
     </script>
 </body>
 </html>
-
